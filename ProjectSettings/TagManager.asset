@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Enemy
+  - Fade Panel
+  - Obsticle
+  - DropContainer
+  - Skill
+  - Collectable
+  - Destructible
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - player
+  - background
+  - Projectile
+  - Enemy
+  - Obstacle
+  - Destructible
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Background
+    uniqueID: 379578725
+    locked: 0
+  - name: Forground
+    uniqueID: 2295191679
+    locked: 0
+  - name: Player
+    uniqueID: 2323965313
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0

@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1137828, g: 0.19013312, b: 0.2313514, a: 1}
+  m_IndirectSpecularColor: {r: 0.114481695, g: 0.19145027, b: 0.23326445, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -310,14 +310,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5739616327053476984, guid: c0316f04e4cb8104a8da140a90463652, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5739616327053476985, guid: c0316f04e4cb8104a8da140a90463652, type: 3}
-      propertyPath: music.Array.size
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5739616327053476985, guid: c0316f04e4cb8104a8da140a90463652, type: 3}
-      propertyPath: ambientClips.Array.size
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -6695,10 +6687,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6634c0dac7b3c0d4eabc45bbee443d86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shadowText: {fileID: 303773936}
-  airText: {fileID: 1537745201}
-  fireText: {fileID: 476795209}
-  waterText: {fileID: 1716066145}
   total: {fileID: 1427053485}
   PlayerName: {fileID: 162041751}
   closeButton: {fileID: 1534241484}

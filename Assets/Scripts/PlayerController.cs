@@ -49,18 +49,18 @@ public class PlayerController : MonoBehaviour
 		myRigidbody2D = GetComponent<Rigidbody2D>();
 		animators = GetComponentsInChildren<Animator>(true);
 
-		SetActiveSkill(0);
+		//SetActiveSkill(0);
 
-		coolDownTimes = new float[skills.Length];
-		timerTimes = new float[skills.Length];
-		skillWasCast = new bool[skills.Length];
+		//coolDownTimes = new float[skills.Length];
+		//timerTimes = new float[skills.Length];
+		//skillWasCast = new bool[skills.Length];
 
-		for (int i = 0; i < skills.Length; i++) {
-			SkillConfig skill = skills[i].GetComponent<SkillConfig>();
-			coolDownTimes[i] = skill.CoolDownTime;
-			canvasController.SetCoolDownTime(i, coolDownTimes[i]);
-			canvasController.SetSkillImages(i, skill.SkillImage);
-		}
+		//for (int i = 0; i < skills.Length; i++) {
+		//	SkillConfig skill = skills[i].GetComponent<SkillConfig>();
+		//	coolDownTimes[i] = skill.CoolDownTime;
+		//	canvasController.SetCoolDownTime(i, coolDownTimes[i]);
+		//	canvasController.SetSkillImages(i, skill.SkillImage);
+		//}
 	}
 
 	void Update()
@@ -68,8 +68,8 @@ public class PlayerController : MonoBehaviour
 		if (!isDead && !GameController.instance.isPaused) {
 			Move();
 
-			SelectSkill();
-			Fire();
+			//SelectSkill();
+			//Fire();
 		}
 		if (Input.GetButtonDown("Enter"))
 		{
@@ -116,7 +116,7 @@ public class PlayerController : MonoBehaviour
 		moveVertically = Mathf.Abs(myRigidbody2D.velocity.y) > Mathf.Epsilon;
 
 		SetAnimations();
-		FlipDirection();
+		//FlipDirection();
 	}
 
 	private IEnumerator PlayerDeath()

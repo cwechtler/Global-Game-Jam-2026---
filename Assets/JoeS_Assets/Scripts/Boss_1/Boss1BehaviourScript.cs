@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy5_BehaviourScript : MonoBehaviour
+public class Boss1BehaviourScript : MonoBehaviour
 {
     [SerializeField] private Animator animator;
     public float speed = .2f; // Adjust speed in the Inspector

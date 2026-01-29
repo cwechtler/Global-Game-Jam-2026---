@@ -12,7 +12,7 @@ public enum DestructibleState
 
 public class Destructible : MonoBehaviour
 {
-	[SerializeField] private skillElementType skillRequiredToDestroy;
+	[SerializeField] private maskType skillRequiredToDestroy;
 	[Space]
 	[Tooltip("Check box to select a prefab item to be dropped on destroy.")]
 	[SerializeField] private bool dropItem = true;
@@ -47,7 +47,7 @@ public class Destructible : MonoBehaviour
 	{
 		if (collision.CompareTag("Skill") && !dropped) {
 			SkillConfig skill = collision.GetComponentInParent<SkillConfig>();
-			if (skill.SkillElementType == skillRequiredToDestroy) {
+			if (skill.MaskType == skillRequiredToDestroy) {
 				float skillDuration = skill.CoolDownTime;		
 				StartCoroutine(UpdateSprite(skillDuration));		
 			}
@@ -57,7 +57,7 @@ public class Destructible : MonoBehaviour
 	private void OnParticleCollision(GameObject particle)
 	{
 		SkillConfig particleParent = particle.GetComponentInParent<SkillConfig>();
-		if (particleParent.SkillElementType == skillRequiredToDestroy && !dropped) {
+		if (particleParent.MaskType == skillRequiredToDestroy && !dropped) {
 			float skillDuration = particleParent.CoolDownTime;
 			StartCoroutine(UpdateSprite(skillDuration));
 		}
@@ -70,7 +70,7 @@ public class Destructible : MonoBehaviour
 		if (sfxClips.Length > 0) {
 			randomClip = Random.Range(0, sfxClips.Length - 1);
 		}
-		SoundManager.instance.PlayDestructibleSound(sfxClips[randomClip]);
+		SoundManager.instance.PlayOneShot(sfxClips[randomClip]);
 
 		if (hasDestructableStates) {
 			switch (state) {

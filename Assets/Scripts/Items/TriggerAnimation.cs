@@ -28,7 +28,7 @@ public class TriggerAnimation : MonoBehaviour
     IEnumerator Something(float value)
     {
         yield return new WaitUntil(()=>myDestructable == null);
-        SoundManager.instance.PlayDestructibleSound(soundClip);
+        SoundManager.instance.PlayOneShot(soundClip);
         myAnimator.SetTrigger(myTrigger);
     }
 

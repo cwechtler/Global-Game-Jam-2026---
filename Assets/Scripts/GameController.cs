@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class GameController : MonoBehaviour
 {
@@ -187,12 +189,15 @@ public class GameController : MonoBehaviour
 		return true;
 	}
 
-	public void AddEnemyType(skillElementType skillElementType) {
-		switch (skillElementType) {
-			//case skillElementType.//{ Skill type here }:
-            //     {Skilltype++};
-            //    break;
-			default:
+	public void AddEnemyType(maskType maskType) {
+		switch (maskType) {
+            case maskType.mask1:
+                //mask1++;
+                break;
+            case maskType.mask2:
+                //mask2++;
+                break;
+            default:
 				break;
 		}
 	}

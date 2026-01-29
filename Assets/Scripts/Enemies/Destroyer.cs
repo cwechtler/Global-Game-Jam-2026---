@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Destroyer : MonoBehaviour
 {
-	private skillElementType skillElementType;
+	private maskType skillElementType;
 
 	void Start()
 	{
@@ -16,7 +16,7 @@ public class Destroyer : MonoBehaviour
 	{
 		if (collision.CompareTag("Enemy")) {
 			Enemy enemy = collision.GetComponent<Enemy>();
-			skillElementType type = enemy.SkillElementTypeToDestroy;
+			maskType type = enemy.SkillElementTypeToDestroy;
 			if (skillElementType == type) {
 				enemy.reduceHealth(100);
 			}

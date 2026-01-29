@@ -70,7 +70,7 @@ public class Destructible : MonoBehaviour
 		if (sfxClips.Length > 0) {
 			randomClip = Random.Range(0, sfxClips.Length - 1);
 		}
-		SoundManager.instance.PlayDestructibleSound(sfxClips[randomClip]);
+		SoundManager.instance.PlayOneShot(sfxClips[randomClip]);
 
 		if (hasDestructableStates) {
 			switch (state) {

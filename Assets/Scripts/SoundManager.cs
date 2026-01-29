@@ -12,8 +12,10 @@ public class SoundManager : MonoBehaviour {
 	[Space]
 	[SerializeField] private AudioClip[] music;
 	[SerializeField] private AudioClip[] ambientClips;
-	[SerializeField] private AudioClip[] movementClips;
-	[Space]
+	[SerializeField] private AudioClip[] walkClips;
+    [SerializeField] private AudioClip[] runClips;
+	[SerializeField] private AudioClip[] attackClips;
+    [Space]
 	[SerializeField] private AudioClip buttonClick;
     [SerializeField] private AudioClip scoreClip;
     [SerializeField] private AudioClip hurtClip;
@@ -137,16 +139,21 @@ public class SoundManager : MonoBehaviour {
 		SFXAudioSource.pitch = 1f;
 		SFXAudioSource.PlayOneShot(buttonClick, 2f);
 	}
+	public void PlayAttackClip() {
+		SFXAudioSource.pitch = Random.Range(.95f, 1.05f);
+		SFXAudioSource.PlayOneShot(attackClips[Random.Range(0, attackClips.Length)]);
+    }
 
-	public void PlayWalkClip() {
+    public void PlayWalkClip() {
 		SFXAudioSource.pitch = 1f;
-		SFXAudioSource.PlayOneShot(movementClips[1], .2f);
+
+		SFXAudioSource.PlayOneShot(walkClips[Random.Range(0, walkClips.Length)], .2f);
 	}
 
 	public void PlayRunClip()
 	{
 		SFXAudioSource.pitch = 1f;
-		SFXAudioSource.PlayOneShot(movementClips[2], .2f);
+		SFXAudioSource.PlayOneShot(runClips[Random.Range(0, runClips.Length)], .2f);
 	}
 
 	public void PlayHurtClip() {
@@ -160,16 +167,11 @@ public class SoundManager : MonoBehaviour {
 		SFXAudioSource.PlayOneShot(deathClip);
 	}
 
-	public void PlayDestructibleSound(AudioClip clip)
-	{
-		SFXAudioSource.PlayOneShot(clip);
-	}
-
-	public void EnemyDeathSound(AudioClip clip)
-	{
+	public void PlayOneShot(AudioClip clip) 
+	{ 
 		SFXAudioSource.pitch = 1f;
 		SFXAudioSource.PlayOneShot(clip);
-	}
+    }
 
 	public void ChangeMasterVolume(float volume) {
 		audioMixer.SetFloat("Master", volume);

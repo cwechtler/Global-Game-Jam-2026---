@@ -106,7 +106,7 @@ public class Enemy : MonoBehaviour
 		if (health <= 0 && !isDead) {
 			isDead = true;
 			Destroy(gameObject);
-			SoundManager.instance.EnemyDeathSound(deathClip);
+			SoundManager.instance.PlayOneShot(deathClip);
 			GameController.instance.EnemiesKilled++;
 			GameController.instance.AddEnemyType(skillElementTypeToDestroy);
 

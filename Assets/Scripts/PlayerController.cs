@@ -15,15 +15,16 @@ public class PlayerController : MonoBehaviour
 	[Tooltip("Skill Prefabs")]
 	[SerializeField] private GameObject[] skills;
 	[SerializeField] private Transform skillSpawner, skillSpawnPoint, activeSkillContainer;
-	[SerializeField] private GameObject lightningEndPoint;
 	[Space]
 	[SerializeField] private Transform playerTransform;
 	[SerializeField] private GameObject rigFront, rigBack;
 	[Space]
 	[SerializeField] private CanvasController canvasController;
+	[SerializeField] private maskType activeMaskType;
 
-    public GameObject LightningEndPoint { get => lightningEndPoint; }
-	public int ExperiencePoints { get => experiencePoints; set => experiencePoints = value; }
+	public maskType ActiveMaskType { get => activeMaskType; }
+
+    public int ExperiencePoints { get => experiencePoints; set => experiencePoints = value; }
 	public List<GameObject> InventoryItems { get => inventoryItems; set => inventoryItems = value; }
 	public float FireX { get => fireX; }
 	public float FireY { get => fireY; }
@@ -68,7 +69,7 @@ public class PlayerController : MonoBehaviour
 		if (!isDead && !GameController.instance.isPaused) {
 			Move();
 
-			//SelectSkill();
+			SelectSkill();
 			//Fire();
 		}
 		if (Input.GetButtonDown("Enter"))
@@ -101,7 +102,7 @@ public class PlayerController : MonoBehaviour
 		float inputY = Input.GetAxis("Vertical");
 		float inputX = Input.GetAxis("Horizontal");
 
-		if (!EventSystem.current.IsPointerOverGameObject()) {
+        if (!EventSystem.current.IsPointerOverGameObject()) {
 			if (Input.GetMouseButton(0))
 			{
 				Vector3 direction = MousePointerDirection();
@@ -157,16 +158,18 @@ public class PlayerController : MonoBehaviour
 		}
 
 		if (Input.GetButtonDown("Fire1")) {
-			SetActiveSkill(0);
-		}
+			//SetActiveSkill(0);
+			activeMaskType = skills[0].GetComponent<SkillConfig>().MaskType;
+        }
 		else if (Input.GetButtonDown("Fire2")) {
-			SetActiveSkill(1);
-		}
+			//SetActiveSkill(1);
+			activeMaskType = skills[1].GetComponent<SkillConfig>().MaskType;
+        }
 		else if (Input.GetButtonDown("Fire3")) {
-			SetActiveSkill(2);
+			//SetActiveSkill(2);
 		}
 		else if (Input.GetButtonDown("Jump")) {
-			SetActiveSkill(3);
+			//SetActiveSkill(3);
 		}
 	}
 
@@ -191,13 +194,13 @@ public class PlayerController : MonoBehaviour
 			skillSpawner.eulerAngles = new Vector3(0, 0, Mathf.Atan2(-fireY, -fireX) * 180 / Mathf.PI);
 			if (skillWasCast[activeSkillIndex] == false) {
 				skillWasCast[activeSkillIndex] = true;
-				string skillType = activeSkill.GetComponent<SkillConfig>().SkillElementType.ToString();
+				string skillType = activeSkill.GetComponent<SkillConfig>().MaskType.ToString();
 				foreach (var animator in animators) {
 					animator.SetTrigger("Attack");
 				}
 				switch (skillType) {
 					//case { skill that required casting it }:
-     //                   CastSkill();
+					// CastSkill();
 					//	break;
 					//case { skill that required placing it }:
 					//	PlaceSkill();

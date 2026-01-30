@@ -42,7 +42,7 @@ public class PlayerSoundFX : MonoBehaviour
 
     public void SwordSwipe()
     {
-        //SoundManager.instance.PlayAttackClips();
+        SoundManager.instance.PlayAttackClip();
     }
 
     public void Hurt()

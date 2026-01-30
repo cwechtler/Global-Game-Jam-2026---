@@ -57,7 +57,6 @@ public class Enemy : MonoBehaviour
             aipath.canMove = false;
 			myRigidbody.gravityScale = 0;
 			myRigidbody.velocity = new Vector2(0, 0);
-			//myRigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
             myRigidbody.bodyType = RigidbodyType2D.Static;
 
             var guo = new GraphUpdateObject(col.bounds);
@@ -72,7 +71,6 @@ public class Enemy : MonoBehaviour
 			alternateSprite.SetActive(false);
 			aipath.canMove = true;
 			myRigidbody.gravityScale = 1;
-			//myRigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
 			myRigidbody.bodyType = RigidbodyType2D.Dynamic;
 
             var guo = new GraphUpdateObject(col.bounds);
@@ -125,22 +123,31 @@ public class Enemy : MonoBehaviour
 
 	private void OnCollisionStay2D(Collision2D collision)
 	{
-		if (collision.gameObject.CompareTag("Player")) {
-			if (damageTimer <= 0) {
-				DamagePlayer();
-			}
-		}
+        //Debug.Log("Enemy collided with: " + collision.gameObject.name);
+  //      if (collision.gameObject.CompareTag("Player")) {
+		//	if (damageTimer <= 0) {
+		//		DamagePlayer();
+		//	}
+		//}
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (collision.CompareTag("Skill")) {
+		Debug.Log("Enemy Triggered by: " + collision.name);
+        if (collision.CompareTag("Skill")) {
 			SkillConfig SkillConfig = collision.GetComponentInParent<SkillConfig>();
 			if (SkillConfig.MaskType == skillElementTypeToDestroy) {
 				reduceHealth(SkillConfig.GetDamage());
 			}
-		}		
-	}
+		}
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (damageTimer <= 0)
+            {
+                DamagePlayer();
+            }
+        }
+    }
 
 	private void OnParticleCollision(GameObject particle)
 	{

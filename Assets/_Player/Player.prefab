@@ -40,9 +40,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1147470130644135686}
-  - component: {fileID: 1147470130644135684}
-  - component: {fileID: 1147470130644135685}
   - component: {fileID: 1147470130644135706}
+  - component: {fileID: 1147470130644135684}
+  - component: {fileID: 1180860036397826976}
+  - component: {fileID: 1147470130644135685}
   - component: {fileID: 1147470130644135707}
   m_Layer: 6
   m_Name: Player
@@ -68,6 +69,14 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!81 &1147470130644135706
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1147470130644135704}
+  m_Enabled: 1
 --- !u!70 &1147470130644135684
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
@@ -81,9 +90,25 @@ CapsuleCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
-  m_Size: {x: 1, y: 1.9}
+  m_Offset: {x: 0.15606308, y: 0.08534706}
+  m_Size: {x: 0.81467533, y: 1.5732434}
   m_Direction: 0
+--- !u!58 &1180860036397826976
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1147470130644135704}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: -0.32}
+  serializedVersion: 2
+  m_Radius: 0.4
 --- !u!50 &1147470130644135685
 Rigidbody2D:
   serializedVersion: 4
@@ -105,14 +130,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
---- !u!81 &1147470130644135706
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1147470130644135704}
-  m_Enabled: 1
 --- !u!114 &1147470130644135707
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,21 +143,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 100
-  speed: {x: 2, y: 2}
+  speed: {x: 10, y: 10}
   projectileSpeed: 15
   skills:
-  - {fileID: 1907191172978173157, guid: 4fd3902bf5a858649a557c4bf4fb632e, type: 3}
-  - {fileID: 268200511403042556, guid: 696468878adb46343bac467a555c30f0, type: 3}
-  - {fileID: 7070409847082850953, guid: 126f1fa0a2440824abf795324cfdd7ed, type: 3}
-  - {fileID: 6665855531074833030, guid: ccfc44bf82e4bf748b5819b40ee6b46a, type: 3}
+  - {fileID: 8216344129556163347, guid: 8428783c4e02fde418fb8b6cbb299973, type: 3}
+  - {fileID: 7859413831658676518, guid: 5116348c0a9558b49b3e2d2f00045d7b, type: 3}
   skillSpawner: {fileID: 1147470130251960737}
   skillSpawnPoint: {fileID: 1147470131197701088}
   activeSkillContainer: {fileID: 1147470131743012527}
   playerTransform: {fileID: 1147470130644135686}
-  rigFront: {fileID: 0}
-  rigBack: {fileID: 0}
   canvasController: {fileID: 0}
   activeMaskType: 0
+  currentDirection: 0
   experiencePoints: 0
 --- !u!1 &1147470131197701089
 GameObject:
@@ -167,7 +181,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1147470131197701089}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.51, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1147470130251960737}
@@ -371,3 +385,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd3955143866a9b4f93c9124f62d17ce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minStepInterval: 0.12

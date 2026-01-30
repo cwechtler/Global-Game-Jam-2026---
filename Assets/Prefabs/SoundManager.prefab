@@ -341,8 +341,14 @@ MonoBehaviour:
   ambientAudioSource: {fileID: 5739616327053476987}
   music: []
   ambientClips: []
-  movementClips: []
+  walkClips: []
+  runClips:
+  - {fileID: 8300000, guid: ac95486ca90dd5d4e906cad897a31b4c, type: 3}
+  attackClips:
+  - {fileID: 8300000, guid: 765aadce76cc1b1419c5a5028aa875d5, type: 3}
+  - {fileID: 8300000, guid: bbd93d3355fb26d4f9e6a34ac9313dc7, type: 3}
+  - {fileID: 8300000, guid: 700b2d15a73d4b34cb63fe92fa214f02, type: 3}
   buttonClick: {fileID: 0}
   scoreClip: {fileID: 0}
-  hurtClip: {fileID: 0}
-  deathClip: {fileID: 0}
+  hurtClip: {fileID: 8300000, guid: 9cf74c0ccab570e438780fe4bf5fe5e7, type: 3}
+  deathClip: {fileID: 8300000, guid: b65f908dbc7f58c41bbaa20aae934553, type: 3}

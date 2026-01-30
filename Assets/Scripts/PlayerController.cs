@@ -17,12 +17,15 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private Transform skillSpawner, skillSpawnPoint, activeSkillContainer;
 	[Space]
 	[SerializeField] private Transform playerTransform;
-	[SerializeField] private GameObject rigFront, rigBack;
 	[Space]
 	[SerializeField] private CanvasController canvasController;
 	[SerializeField] private maskType activeMaskType;
 
 	public maskType ActiveMaskType { get => activeMaskType; }
+    public enum MoveDir { None, North, South, East, West }
+    public MoveDir currentDirection = MoveDir.None;
+
+
 
     public int ExperiencePoints { get => experiencePoints; set => experiencePoints = value; }
 	public List<GameObject> InventoryItems { get => inventoryItems; set => inventoryItems = value; }
@@ -32,7 +35,7 @@ public class PlayerController : MonoBehaviour
 	private List<GameObject> inventoryItems = new List<GameObject>();
 
 	private Rigidbody2D myRigidbody2D;
-	private Animator[] animators;
+	private Animator animator;
 
 	private bool moveHorizontaly, moveVertically;
 	private bool isDead = false;
@@ -48,7 +51,7 @@ public class PlayerController : MonoBehaviour
 	void Start()
 	{
 		myRigidbody2D = GetComponent<Rigidbody2D>();
-		animators = GetComponentsInChildren<Animator>(true);
+		animator = GetComponentInChildren<Animator>(true);
 
 		//SetActiveSkill(0);
 
@@ -86,7 +89,8 @@ public class PlayerController : MonoBehaviour
 	public void ReduceHealth(int damage)
 	{
 		if (!isDead) {
-			SoundManager.instance.PlayHurtClip();
+            animator.SetTrigger("Hurt");
+            SoundManager.instance.PlayHurtClip();
 
 			health -= damage;
 			canvasController.ReduceHealthBar(health);
@@ -116,7 +120,7 @@ public class PlayerController : MonoBehaviour
 		moveHorizontaly = Mathf.Abs(myRigidbody2D.velocity.x) > Mathf.Epsilon;
 		moveVertically = Mathf.Abs(myRigidbody2D.velocity.y) > Mathf.Epsilon;
 
-		SetAnimations();
+		SetAnimations(inputX, inputY);
 		//FlipDirection();
 	}
 
@@ -125,9 +129,9 @@ public class PlayerController : MonoBehaviour
 		isDead = true;
 		myRigidbody2D.isKinematic = true;
 		myRigidbody2D.velocity = new Vector3(0, 0, 0);
-		foreach (var animator in animators) {
-			animator.SetBool("IsDead", true);
-		}
+		//foreach (var animator in animator) {
+			animator.SetBool("Death", true);
+		//}
 		SoundManager.instance.PlayDeathClip();
 		yield return new WaitForSeconds(2f);
 		LevelManager.instance.LoadLevel(LevelManager.LoseLevelString);
@@ -166,11 +170,13 @@ public class PlayerController : MonoBehaviour
 			activeMaskType = skills[1].GetComponent<SkillConfig>().MaskType;
         }
 		else if (Input.GetButtonDown("Fire3")) {
-			//SetActiveSkill(2);
-		}
+            //SetActiveSkill(2);
+            animator.SetTrigger("Attack");
+        }
 		else if (Input.GetButtonDown("Jump")) {
-			//SetActiveSkill(3);
-		}
+			ReduceHealth(0);
+            //SetActiveSkill(3);
+        }
 	}
 
 	private void Fire() {
@@ -195,9 +201,9 @@ public class PlayerController : MonoBehaviour
 			if (skillWasCast[activeSkillIndex] == false) {
 				skillWasCast[activeSkillIndex] = true;
 				string skillType = activeSkill.GetComponent<SkillConfig>().MaskType.ToString();
-				foreach (var animator in animators) {
+				//foreach (var animator in animator) {
 					animator.SetTrigger("Attack");
-				}
+				//}
 				switch (skillType) {
 					//case { skill that required casting it }:
 					// CastSkill();
@@ -254,48 +260,133 @@ public class PlayerController : MonoBehaviour
 		return direction;
 	}
 
-	private void SetAnimations()
-	{
-		if (moveHorizontaly || moveVertically) {
-			foreach (var animator in animators) {
-				if (animator.isActiveAndEnabled)
-					animator.SetBool("Move", true);
-			}
-		}
-		else {
-			foreach (var animator in animators) {
-				if (animator.isActiveAndEnabled)
-					animator.SetBool("Move", false);
-			}
-		}
-	}
+	private void SetAnimations(float inputX, float inputY)
+    {
+        // Animation speed based on stick magnitude
+        float moveAmount = new Vector2(inputX, inputY).magnitude;
+        animator.speed = Mathf.Lerp(0.5f, 1.5f, moveAmount);
 
-	private void FlipDirection()
-	{
-		if (moveHorizontaly ) {
-			rigFront.SetActive(true);
-			rigBack.SetActive(false);
-			float DirectionX = Mathf.Sign(myRigidbody2D.velocity.x);
+        animator.SetBool("RunNorth", false);
+        animator.SetBool("RunSouth", false);
+        animator.SetBool("RunEast", false);
+        animator.SetBool("RunWest", false);
+        animator.SetBool("Idle", false);
 
-			if (DirectionX == 1) {
-				playerTransform.localScale = new Vector2(1f, 1f);
-			}
-			if (DirectionX == -1) {
-				playerTransform.localScale = new Vector2(-1f, 1f);
-			}
+        // No movement
+        if (Mathf.Abs(inputX) < 0.1f && Mathf.Abs(inputY) < 0.1f)
+		{
+			currentDirection = MoveDir.None;
+			if (CanReturnToIdle())
+			{
+                animator.Play("IdleSouth");
+                animator.SetBool("Idle", true);
+            }
+                
+            return;
 		}
 
-		if (moveVertically) {
-			float DirectionY = Mathf.Sign(myRigidbody2D.velocity.y);
+        // Vertical dead zone so slight up/down doesn't override left/right
+        float verticalDeadZone = 0.2f;
 
-			if (DirectionY == 1) {
-				rigFront.SetActive(false);
-				rigBack.SetActive(true);
+		if (Mathf.Abs(inputY) < verticalDeadZone)
+		{
+			// Treat as horizontal movement
+			if (inputX > 0)
+			{
+				animator.SetBool("RunEast", true);
+				currentDirection = MoveDir.East;
 			}
-			if (DirectionY == -1) {
-				rigFront.SetActive(true);
-				rigBack.SetActive(false);
+			else
+			{
+				animator.SetBool("RunWest", true);
+				currentDirection = MoveDir.West;
 			}
-		}
-	}
+
+            return;
+        }
+
+        // If vertical is strong enough, use it
+        if (Mathf.Abs(inputY) >= Mathf.Abs(inputX))
+        {
+			if (inputY > 0)
+			{
+				animator.SetBool("RunNorth", true);
+                currentDirection = MoveDir.North;
+            }
+            else
+			{
+				animator.SetBool("RunSouth", true);
+				currentDirection = MoveDir.South;
+            }
+        }
+        else
+        {
+			if (inputX > 0)
+			{
+				animator.SetBool("RunEast", true);
+				currentDirection = MoveDir.East;
+            }
+			else
+			{
+				animator.SetBool("RunWest", true);
+				currentDirection = MoveDir.West;
+            }
+        }
+    }
+
+    private bool CanReturnToIdle()
+    {
+        var state = animator.GetCurrentAnimatorStateInfo(0);
+
+        // These animation names must finish before returning to idle
+        if (state.IsName("HurtNorth") ||
+            state.IsName("HurtSouth") ||
+            state.IsName("HurtEast") ||
+            state.IsName("HurtWest") ||
+            state.IsName("AttackNorth") ||
+            state.IsName("AttackSouth") ||
+			state.IsName("AttackEast") ||
+			state.IsName("AttackWest"))
+        {
+            if (state.normalizedTime >= 1f)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+
+
+    //private void FlipDirection()
+    //{
+    //	if (moveHorizontaly ) {
+    //		rigFront.SetActive(true);
+    //		rigBack.SetActive(false);
+    //		float DirectionX = Mathf.Sign(myRigidbody2D.velocity.x);
+
+    //		if (DirectionX == 1) {
+    //			playerTransform.localScale = new Vector2(1f, 1f);
+    //		}
+    //		if (DirectionX == -1) {
+    //			playerTransform.localScale = new Vector2(-1f, 1f);
+    //		}
+    //	}
+
+    //	if (moveVertically) {
+    //		float DirectionY = Mathf.Sign(myRigidbody2D.velocity.y);
+
+    //		if (DirectionY == 1) {
+    //			rigFront.SetActive(false);
+    //			rigBack.SetActive(true);
+    //		}
+    //		if (DirectionY == -1) {
+    //			rigFront.SetActive(true);
+    //			rigBack.SetActive(false);
+    //		}
+    //	}
+    //}
 }

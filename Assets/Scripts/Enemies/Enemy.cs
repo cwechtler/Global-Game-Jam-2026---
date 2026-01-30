@@ -57,7 +57,6 @@ public class Enemy : MonoBehaviour
             aipath.canMove = false;
 			myRigidbody.gravityScale = 0;
 			myRigidbody.velocity = new Vector2(0, 0);
-			//myRigidbody.constraints = RigidbodyConstraints2D.FreezeAll;
             myRigidbody.bodyType = RigidbodyType2D.Static;
 
             var guo = new GraphUpdateObject(col.bounds);
@@ -72,7 +71,6 @@ public class Enemy : MonoBehaviour
 			alternateSprite.SetActive(false);
 			aipath.canMove = true;
 			myRigidbody.gravityScale = 1;
-			//myRigidbody.constraints = RigidbodyConstraints2D.FreezeRotation;
 			myRigidbody.bodyType = RigidbodyType2D.Dynamic;
 
             var guo = new GraphUpdateObject(col.bounds);

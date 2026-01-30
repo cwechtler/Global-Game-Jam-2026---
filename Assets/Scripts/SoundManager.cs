@@ -150,10 +150,12 @@ public class SoundManager : MonoBehaviour {
 		SFXAudioSource.PlayOneShot(walkClips[Random.Range(0, walkClips.Length)], .2f);
 	}
 
-	public void PlayRunClip()
+	private bool useHighPitch = false;
+    public void PlayRunClip()
 	{
-		SFXAudioSource.pitch = 1f;
-		SFXAudioSource.PlayOneShot(runClips[Random.Range(0, runClips.Length)], .2f);
+        SFXAudioSource.pitch = useHighPitch ? 0.75f : 0.7f;
+        useHighPitch = !useHighPitch;
+        SFXAudioSource.PlayOneShot(runClips[Random.Range(0, runClips.Length)], .1f);
 	}
 
 	public void PlayHurtClip() {

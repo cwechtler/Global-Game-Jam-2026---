@@ -89,7 +89,8 @@ public class PlayerController : MonoBehaviour
 	public void ReduceHealth(int damage)
 	{
 		if (!isDead) {
-			SoundManager.instance.PlayHurtClip();
+            animator.SetTrigger("Hurt");
+            SoundManager.instance.PlayHurtClip();
 
 			health -= damage;
 			canvasController.ReduceHealthBar(health);
@@ -173,7 +174,7 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Attack");
         }
 		else if (Input.GetButtonDown("Jump")) {
-            animator.SetTrigger("Hurt");
+			ReduceHealth(0);
             //SetActiveSkill(3);
         }
 	}
@@ -269,12 +270,19 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("RunSouth", false);
         animator.SetBool("RunEast", false);
         animator.SetBool("RunWest", false);
+        animator.SetBool("Idle", false);
 
-		// No movement
-		if (Mathf.Abs(inputX) < 0.1f && Mathf.Abs(inputY) < 0.1f)
+        // No movement
+        if (Mathf.Abs(inputX) < 0.1f && Mathf.Abs(inputY) < 0.1f)
 		{
 			currentDirection = MoveDir.None;
-			return;
+			if (CanReturnToIdle())
+			{
+                animator.Play("IdleSouth");
+                animator.SetBool("Idle", true);
+            }
+                
+            return;
 		}
 
         // Vertical dead zone so slight up/down doesn't override left/right
@@ -325,6 +333,33 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
+
+    private bool CanReturnToIdle()
+    {
+        var state = animator.GetCurrentAnimatorStateInfo(0);
+
+        // These animation names must finish before returning to idle
+        if (state.IsName("HurtNorth") ||
+            state.IsName("HurtSouth") ||
+            state.IsName("HurtEast") ||
+            state.IsName("HurtWest") ||
+            state.IsName("AttackNorth") ||
+            state.IsName("AttackSouth") ||
+			state.IsName("AttackEast") ||
+			state.IsName("AttackWest"))
+        {
+            if (state.normalizedTime >= 1f)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+
 
     //private void FlipDirection()
     //{

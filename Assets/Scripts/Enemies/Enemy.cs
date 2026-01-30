@@ -123,22 +123,31 @@ public class Enemy : MonoBehaviour
 
 	private void OnCollisionStay2D(Collision2D collision)
 	{
-		if (collision.gameObject.CompareTag("Player")) {
-			if (damageTimer <= 0) {
-				DamagePlayer();
-			}
-		}
+        //Debug.Log("Enemy collided with: " + collision.gameObject.name);
+  //      if (collision.gameObject.CompareTag("Player")) {
+		//	if (damageTimer <= 0) {
+		//		DamagePlayer();
+		//	}
+		//}
 	}
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-		if (collision.CompareTag("Skill")) {
+		Debug.Log("Enemy Triggered by: " + collision.name);
+        if (collision.CompareTag("Skill")) {
 			SkillConfig SkillConfig = collision.GetComponentInParent<SkillConfig>();
 			if (SkillConfig.MaskType == skillElementTypeToDestroy) {
 				reduceHealth(SkillConfig.GetDamage());
 			}
-		}		
-	}
+		}
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            if (damageTimer <= 0)
+            {
+                DamagePlayer();
+            }
+        }
+    }
 
 	private void OnParticleCollision(GameObject particle)
 	{

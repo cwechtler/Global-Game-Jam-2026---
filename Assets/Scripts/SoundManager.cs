@@ -15,10 +15,10 @@ public class SoundManager : MonoBehaviour {
 	[SerializeField] private AudioClip[] walkClips;
     [SerializeField] private AudioClip[] runClips;
 	[SerializeField] private AudioClip[] attackClips;
+    [SerializeField] private AudioClip[] hurtClips;
     [Space]
 	[SerializeField] private AudioClip buttonClick;
     [SerializeField] private AudioClip scoreClip;
-    [SerializeField] private AudioClip hurtClip;
     [SerializeField] private AudioClip deathClip;
 
     public int MusicArrayLength { get => music.Length; }
@@ -160,7 +160,7 @@ public class SoundManager : MonoBehaviour {
 
 	public void PlayHurtClip() {
 		SFXAudioSource.pitch = Random.Range(.95f, 1.05f);
-		SFXAudioSource.PlayOneShot(hurtClip);
+		SFXAudioSource.PlayOneShot(hurtClips[Random.Range(0, hurtClips.Length)]);
 	}
 
 	public void PlayDeathClip()

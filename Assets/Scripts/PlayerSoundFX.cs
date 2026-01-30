@@ -4,14 +4,12 @@ public class PlayerSoundFX : MonoBehaviour
 {
     [SerializeField] float minStepInterval = 0.12f;
 
-    private Animator animator;
     private PlayerController player;
     private float lastStepTime = 0f;
 
 
     private void Start()
     {
-        animator = GetComponent<Animator>();
         player = GetComponentInParent<PlayerController>();
     }           
 
@@ -37,17 +35,17 @@ public class PlayerSoundFX : MonoBehaviour
 
     public void Death()
     {
-        SoundManager.instance.PlayDeathClip();
+        //SoundManager.instance.PlayDeathClip();
     }
 
     public void SwordSwipe()
     {
-        //SoundManager.instance.PlayAttackClips();
+        SoundManager.instance.PlayAttackClip();
     }
 
     public void Hurt()
     {
-        SoundManager.instance.PlayHurtClip();
+        //SoundManager.instance.PlayHurtClip();
     }
 
     private bool IsStillMoving()

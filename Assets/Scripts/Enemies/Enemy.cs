@@ -7,8 +7,6 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-	//[SerializeField] private AttackType maskTypeToActivate;
-
 	[SerializeField] private AudioClip deathClip;
 	[Space]
     [SerializeField] private float health = 1f;
@@ -21,9 +19,6 @@ public class Enemy : MonoBehaviour
 	[SerializeField] private GameObject alternateSprite;
 
     // health changes based on state
-    // no ranged atack, they have to touch the player to inflict damage
-
-    //public AttackType MaskTypeToActivate { get { return maskTypeToActivate; } }
 	
 	private AIPath aipath;
 	private AIDestinationSetter destinationSetter;
@@ -31,7 +26,7 @@ public class Enemy : MonoBehaviour
 	private Rigidbody2D myRigidbody;
     private float damageTimer;
 	private bool isDead;
-    private bool isStopped;
+    private bool isSwitched;
     private PlayerController playerController;
     private CapsuleCollider2D capsuleCollider;
 
@@ -51,11 +46,11 @@ public class Enemy : MonoBehaviour
 	{
         bool isMaskOn = playerController.IsMaskOn;
 
-        if (isMaskOn)
+        if (isMaskOn && !isSwitched)
         {
             cursedEnemy();
         }
-        else
+        else if(!isMaskOn && isSwitched)
         {
             overworldEnemy();
         }
@@ -82,25 +77,27 @@ public class Enemy : MonoBehaviour
 
     private void overworldEnemy()
     {
+        isSwitched= false;
         mainSprite.SetActive(true);
         alternateSprite.SetActive(false);
 
-        var guo = new GraphUpdateObject(capsuleCollider.bounds);
-        guo.modifyWalkability = true;
-        guo.setWalkability = true;
-        AstarPath.active.UpdateGraphs(guo);
-    }
+		var guo = new GraphUpdateObject(capsuleCollider.bounds);
+		guo.modifyWalkability = true;
+		guo.setWalkability = true;
+		AstarPath.active.UpdateGraphs(guo);
+	}
 
     private void cursedEnemy()
     {
+        isSwitched = true;
         mainSprite.SetActive(false);
         alternateSprite.SetActive(true);
 
-        var guo = new GraphUpdateObject(capsuleCollider.bounds);
-        guo.modifyWalkability = true;
-        guo.setWalkability = true;
-        AstarPath.active.UpdateGraphs(guo);
-    }
+		var guo = new GraphUpdateObject(capsuleCollider.bounds);
+		guo.modifyWalkability = true;
+		guo.setWalkability = true;
+		AstarPath.active.UpdateGraphs(guo);
+	}
 
     public void reduceHealth(float damage) {
 		health -= damage;
@@ -126,7 +123,7 @@ public class Enemy : MonoBehaviour
 
     private bool TryDamagePlayer()
     {
-		if (damageTimer > 0 || isStopped)
+		if (damageTimer > 0 )
         {
 			return false;
 		}

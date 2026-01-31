@@ -288,13 +288,6 @@ public class PlayerController : MonoBehaviour
         if (!enemyInRange)
             return; // Skip firing if no enemy
 
-        if (skillConfig is RadialSkill radialSkill && radialSkill.RadialVFX != null)
-            Instantiate(radialSkill.RadialVFX, transform.position, Quaternion.identity);
-
-        //if (skillConfig is ExpandingSkill expandingSkill && expandingSkill.ExpandingVFX != null)
-        //    Instantiate(expandingSkill.ExpandingVFX, transform.position, Quaternion.identity);
-
-
         if (skillConfig is ConeSkill coneSkill)
         {
             animator.SetTrigger("Attack");
@@ -308,7 +301,15 @@ public class PlayerController : MonoBehaviour
             FireProjectile(projectile, direction);
 
         else if (skillConfig is RadialSkill radial)
+        {
+            if (radial.RadialVFX != null)
+            {
+                //Instantiate(radial.RadialVFX, transform.position, Quaternion.identity);
+                GameObject vfx = Instantiate(radial.RadialVFX, transform.position, Quaternion.identity);
+                vfx.transform.SetParent(transform);
+            }
             FireRadial(radial);
+        }
 
         else if (skillConfig is ExpandingSkill expanding)
             StartCoroutine(FireExpanding(expanding));
@@ -390,7 +391,7 @@ public class PlayerController : MonoBehaviour
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, config.Radius, enemyLayer);
 
         foreach (var hit in hits)
-            hit.GetComponent<Enemy>().reduceHealth(config.GetDamage());
+            hit.GetComponentInParent<Enemy>().reduceHealth(config.GetDamage());
     }
 
     private bool ExpandingHasEnemy(ExpandingSkill config)

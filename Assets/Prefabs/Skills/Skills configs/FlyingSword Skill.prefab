@@ -45,9 +45,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillImage: {fileID: 21300000, guid: 2cdd13a589e3d234e9d9ce28f80baec7, type: 3}
   damage: 100
-  firingRate: 0.5
+  firingRate: 5
   coolDownTime: 5
   fireOnce: 0
   attackType: 3
   radialVFX: {fileID: 4269602808709832382, guid: 16db8bad1ce23fd48bd6d0a5510ec9ef, type: 3}
-  radius: 2
+  radius: 3

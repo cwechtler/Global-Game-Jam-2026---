@@ -135,8 +135,8 @@ public class Enemy : MonoBehaviour
 
     private bool TryDamagePlayer()
     {
-		if (damageTimer > 0)
-		{
+		if (damageTimer > 0 || isStopped)
+        {
 			return false;
 		}
 

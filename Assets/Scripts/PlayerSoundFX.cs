@@ -4,6 +4,7 @@ public class PlayerSoundFX : MonoBehaviour
 {
     [SerializeField] float minStepInterval = 0.12f;
 
+    private Animator animator;
     private PlayerController player;
     private float lastStepTime = 0f;
 
@@ -11,7 +12,15 @@ public class PlayerSoundFX : MonoBehaviour
     private void Start()
     {
         player = GetComponentInParent<PlayerController>();
-    }           
+        animator = GetComponent<Animator>();
+    }
+
+    public void AttackAnimationFinished()
+    {
+        player.IsAttacking = false;
+        animator.speed = 1f; // reset to normal
+    }
+
 
     // Called directly from Animation Events
     public void WalkStep()

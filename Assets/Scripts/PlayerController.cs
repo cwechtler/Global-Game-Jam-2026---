@@ -33,9 +33,11 @@ public class PlayerController : MonoBehaviour
 	public List<GameObject> InventoryItems { get => inventoryItems; set => inventoryItems = value; }
 	public float FireX { get => fireX; }
 	public float FireY { get => fireY; }
+    public bool IsAttacking { get => isAttacking; set => isAttacking = value; }
 
     private Vector2 FacingDirection;
     private LayerMask enemyLayer;
+    private bool isAttacking = false;
 
     private List<GameObject> inventoryItems = new List<GameObject>();
     private readonly HashSet<int> animNameHashes = new HashSet<int>()
@@ -125,7 +127,14 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private void Move()
+    public void AttackAnimationFinished()
+    {
+        IsAttacking = false;
+        animator.speed = 1f; // reset to normal
+    }
+
+
+    private void Move()
 	{
 		float inputY = Input.GetAxis("Vertical");
 		float inputX = Input.GetAxis("Horizontal");
@@ -248,7 +257,8 @@ public class PlayerController : MonoBehaviour
 
         if (skillConfig is ConeSkill cone)
         {
-            //Debug.Log(ConeHasEnemy(cone, dir));
+            IsAttacking = true;
+            animator.speed = 1f; // fixed attack animation speed
             enemyInRange = ConeHasEnemy(cone, direction);
         }
         else if (skillConfig is RadialSkill radial)

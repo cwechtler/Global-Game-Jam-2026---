@@ -50,7 +50,7 @@ public class FireBolt : SkillConfig
 				if (col.CompareTag("Enemy")) {
 					Enemy enemy = col.GetComponent<Enemy>();
 
-					if (enemy.SkillElementTypeToDestroy == maskType) {
+					if (enemy.MaskTypeToActivate == maskType) {
 						enemy.reduceHealth(GetDamage());
 					}
 				}

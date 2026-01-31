@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -33,8 +34,19 @@ public class PlayerController : MonoBehaviour
 	public float FireY { get => fireY; }
 
 	private List<GameObject> inventoryItems = new List<GameObject>();
+    private readonly HashSet<int> animNameHashes = new HashSet<int>()
+	{
+		Animator.StringToHash("HurtNorth"),
+		Animator.StringToHash("HurtSouth"),
+		Animator.StringToHash("HurtEast"),
+		Animator.StringToHash("HurtWest"),
+		Animator.StringToHash("AttackNorth"),
+		Animator.StringToHash("AttackSouth"),
+		Animator.StringToHash("AttackEast"),
+		Animator.StringToHash("AttackWest"),
+	};
 
-	private Rigidbody2D myRigidbody2D;
+    private Rigidbody2D myRigidbody2D;
 	private Animator animator;
 
 	private bool moveHorizontaly, moveVertically;
@@ -142,7 +154,8 @@ public class PlayerController : MonoBehaviour
 		activeSkillIndex = index;
 		activeSkill = skills[index];
 		SkillConfig activeSkillSkillConfig = activeSkill.GetComponent<SkillConfig>();
-		firingRate = activeSkillSkillConfig.FireRate;
+        activeMaskType = activeSkillSkillConfig.MaskType;
+        firingRate = activeSkillSkillConfig.FireRate;
 		canvasController.UpdateTextColor();
 	}
 
@@ -162,14 +175,12 @@ public class PlayerController : MonoBehaviour
 		}
 
 		if (Input.GetButtonDown("Fire1")) {
-			//SetActiveSkill(0);
-			activeMaskType = skills[0].GetComponent<SkillConfig>().MaskType;
+			SetActiveSkill(0);
         }
 		else if (Input.GetButtonDown("Fire2")) {
-			//SetActiveSkill(1);
-			activeMaskType = skills[1].GetComponent<SkillConfig>().MaskType;
+			SetActiveSkill(1);
         }
-		else if (Input.GetButtonDown("Fire3")) {
+		else if (Input.GetButton("Fire3")) {
             //SetActiveSkill(2);
             animator.SetTrigger("Attack");
         }
@@ -212,7 +223,7 @@ public class PlayerController : MonoBehaviour
 					//	PlaceSkill();
 					//	break;
 					default:
-						StartCoroutine(ThrowSkill(fireX, fireY));
+						//StartCoroutine(ThrowSkill(fireX, fireY));
 						break;
 				}
 			}
@@ -271,15 +282,17 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("RunEast", false);
         animator.SetBool("RunWest", false);
         animator.SetBool("Idle", false);
+        animator.ResetTrigger("Attack");
 
         // No movement
         if (Mathf.Abs(inputX) < 0.1f && Mathf.Abs(inputY) < 0.1f)
 		{
-			currentDirection = MoveDir.None;
+            animator.SetBool("Idle", true);
+            currentDirection = MoveDir.None;
 			if (CanReturnToIdle())
 			{
                 animator.Play("IdleSouth");
-                animator.SetBool("Idle", true);
+                
             }
                 
             return;
@@ -338,17 +351,9 @@ public class PlayerController : MonoBehaviour
     {
         var state = animator.GetCurrentAnimatorStateInfo(0);
 
-        // These animation names must finish before returning to idle
-        if (state.IsName("HurtNorth") ||
-            state.IsName("HurtSouth") ||
-            state.IsName("HurtEast") ||
-            state.IsName("HurtWest") ||
-            state.IsName("AttackNorth") ||
-            state.IsName("AttackSouth") ||
-			state.IsName("AttackEast") ||
-			state.IsName("AttackWest"))
-        {
-            if (state.normalizedTime >= 1f)
+        if (animNameHashes.Contains(state.shortNameHash))
+		{
+			if (state.normalizedTime >= 1f)
             {
                 return true;
             }
@@ -358,35 +363,4 @@ public class PlayerController : MonoBehaviour
 
         return true;
     }
-
-
-
-    //private void FlipDirection()
-    //{
-    //	if (moveHorizontaly ) {
-    //		rigFront.SetActive(true);
-    //		rigBack.SetActive(false);
-    //		float DirectionX = Mathf.Sign(myRigidbody2D.velocity.x);
-
-    //		if (DirectionX == 1) {
-    //			playerTransform.localScale = new Vector2(1f, 1f);
-    //		}
-    //		if (DirectionX == -1) {
-    //			playerTransform.localScale = new Vector2(-1f, 1f);
-    //		}
-    //	}
-
-    //	if (moveVertically) {
-    //		float DirectionY = Mathf.Sign(myRigidbody2D.velocity.y);
-
-    //		if (DirectionY == 1) {
-    //			rigFront.SetActive(false);
-    //			rigBack.SetActive(true);
-    //		}
-    //		if (DirectionY == -1) {
-    //			rigFront.SetActive(true);
-    //			rigBack.SetActive(false);
-    //		}
-    //	}
-    //}
 }

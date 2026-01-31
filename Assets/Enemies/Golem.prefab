@@ -26,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 4223141233722379868}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 4, y: 6, z: 1}
   m_Children: []
   m_Father: {fileID: 4223141234271190559}
   m_RootOrder: 1
@@ -171,6 +171,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillElementTypeToDestroy: 0
   deathClip: {fileID: 0}
+  maxSpeed: 4
   health: 1
   damage: 0
   expDrop: {fileID: 0}
@@ -221,7 +222,7 @@ MonoBehaviour:
   radius: 0.5
   height: 2
   canMove: 1
-  maxSpeed: 8
+  maxSpeed: 4
   gravity: {x: 0, y: 0, z: 0}
   groundMask:
     serializedVersion: 2

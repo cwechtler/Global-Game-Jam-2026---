@@ -7,21 +7,23 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-	[SerializeField] private maskType skillElementTypeToDestroy;
+	[SerializeField] private maskType maskTypeToActivate;
 
 	[SerializeField] private AudioClip deathClip;
-	[SerializeField] private float health = 1f;
+	[Space]
+    [SerializeField] private float health = 1f;
 	[SerializeField] private int damage = 10;
-	[SerializeField] private GameObject expDrop;
+    [SerializeField] private float aipathMaxSpeed = 4f;
+	[Space]
+    [SerializeField] private GameObject expDrop;
 	[SerializeField] private int experiencePointValue = 10;
 	[SerializeField] private GameObject mainSprite;
 	[SerializeField] private GameObject alternateSprite;
-    // sprite for alternate image
-    // sprite for active image
-    // health changes bases on state
+
+    // health changes based on state
     // no ranged atack, they have to touch the player to inflict damage
 
-    public maskType SkillElementTypeToDestroy { get { return skillElementTypeToDestroy; } }
+    public maskType MaskTypeToActivate { get { return maskTypeToActivate; } }
 	
 	private AIPath aipath;
 	private AIDestinationSetter destinationSetter;
@@ -31,15 +33,15 @@ public class Enemy : MonoBehaviour
 	private bool isDead;
     private bool isStopped;
     private PlayerController playerController;
-    private CapsuleCollider2D col;
-
+    private CapsuleCollider2D capsuleCollider;
 
     void Start()
 	{
-		player = GameObject.FindGameObjectWithTag("Player");
+        player = GameObject.FindGameObjectWithTag("Player");
 		aipath = GetComponent<AIPath>();
-		myRigidbody = GetComponent<Rigidbody2D>();
-        col = GetComponent<CapsuleCollider2D>();
+        aipath.maxSpeed = aipathMaxSpeed;
+        myRigidbody = GetComponent<Rigidbody2D>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
         playerController = player.GetComponent<PlayerController>();
         destinationSetter = GetComponent<AIDestinationSetter>();
 		destinationSetter.target = player.transform;
@@ -47,45 +49,24 @@ public class Enemy : MonoBehaviour
 
 	void Update()
 	{
-        bool shouldStop = playerController.ActiveMaskType != skillElementTypeToDestroy;
+        bool shouldStop = playerController.ActiveMaskType != maskTypeToActivate;
 
         if (shouldStop && !isStopped)
-		{
-            isStopped = true;
-            mainSprite.SetActive(false);
-			alternateSprite.SetActive(true);
-            aipath.canMove = false;
-			myRigidbody.gravityScale = 0;
-			myRigidbody.velocity = new Vector2(0, 0);
-            myRigidbody.bodyType = RigidbodyType2D.Static;
-
-            var guo = new GraphUpdateObject(col.bounds);
-            guo.modifyWalkability = true;
-            guo.setWalkability = false;
-            AstarPath.active.UpdateGraphs(guo);
+        {
+            StopEnemy();
         }
         else if (!shouldStop && isStopped)
-		{
-            isStopped = false;
-            mainSprite.SetActive(true);
-			alternateSprite.SetActive(false);
-			aipath.canMove = true;
-			myRigidbody.gravityScale = 1;
-			myRigidbody.bodyType = RigidbodyType2D.Dynamic;
-
-            var guo = new GraphUpdateObject(col.bounds);
-            guo.modifyWalkability = true;
-            guo.setWalkability = true; 
-            AstarPath.active.UpdateGraphs(guo);
+        {
+            startEnemy();
         }
 
-		if (destinationSetter.target != player.transform)
+        if (destinationSetter.target != player.transform)
 		{
-			//FlipDirectionReversed();
+			FlipDirectionReversed();
 		}
 		else
 		{
-			//FlipDirection();
+			FlipDirection();
 		}
 
 		if (damageTimer > 0) {
@@ -94,10 +75,41 @@ public class Enemy : MonoBehaviour
 
 		if (destinationSetter.target == null) {
 			destinationSetter.target = player.transform;
-			aipath.maxSpeed = 4f;
+			aipath.maxSpeed = aipathMaxSpeed;
 			gameObject.layer = 9;
 		}
 	}
+
+    private void startEnemy()
+    {
+        isStopped = false;
+        mainSprite.SetActive(true);
+        alternateSprite.SetActive(false);
+        aipath.canMove = true;
+        myRigidbody.gravityScale = 1;
+        myRigidbody.bodyType = RigidbodyType2D.Dynamic;
+
+        var guo = new GraphUpdateObject(capsuleCollider.bounds);
+        guo.modifyWalkability = true;
+        guo.setWalkability = true;
+        AstarPath.active.UpdateGraphs(guo);
+    }
+
+    private void StopEnemy()
+    {
+        isStopped = true;
+        mainSprite.SetActive(false);
+        alternateSprite.SetActive(true);
+        aipath.canMove = false;
+        myRigidbody.gravityScale = 0;
+        myRigidbody.velocity = new Vector2(0, 0);
+        myRigidbody.bodyType = RigidbodyType2D.Static;
+
+        var guo = new GraphUpdateObject(capsuleCollider.bounds);
+        guo.modifyWalkability = true;
+        guo.setWalkability = false;
+        AstarPath.active.UpdateGraphs(guo);
+    }
 
     public void reduceHealth(float damage) {
 		health -= damage;
@@ -106,7 +118,7 @@ public class Enemy : MonoBehaviour
 			Destroy(gameObject);
 			SoundManager.instance.PlayOneShot(deathClip);
 			GameController.instance.EnemiesKilled++;
-			GameController.instance.AddEnemyType(skillElementTypeToDestroy);
+			GameController.instance.AddEnemyType(maskTypeToActivate);
 
 			////Drop Experience - MT
 			//GameObject drop = Instantiate(expDrop, transform.position, transform.rotation) as GameObject;
@@ -121,38 +133,45 @@ public class Enemy : MonoBehaviour
 		player.GetComponent<PlayerController>().ReduceHealth(damage);
 	}
 
-	private void OnCollisionStay2D(Collision2D collision)
-	{
-        //Debug.Log("Enemy collided with: " + collision.gameObject.name);
-  //      if (collision.gameObject.CompareTag("Player")) {
-		//	if (damageTimer <= 0) {
-		//		DamagePlayer();
-		//	}
-		//}
-	}
-
-	private void OnTriggerEnter2D(Collider2D collision)
-	{
-		Debug.Log("Enemy Triggered by: " + collision.name);
-        if (collision.CompareTag("Skill")) {
-			SkillConfig SkillConfig = collision.GetComponentInParent<SkillConfig>();
-			if (SkillConfig.MaskType == skillElementTypeToDestroy) {
-				reduceHealth(SkillConfig.GetDamage());
-			}
+    private bool TryDamagePlayer()
+    {
+		if (damageTimer > 0 || isStopped)
+        {
+			return false;
 		}
+
+        DamagePlayer();
+        return true;
+    }
+
+
+    private void OnCollisionStay2D(Collision2D collision)
+	{
+		if (collision.gameObject.CompareTag("Player"))
+		{
+			TryDamagePlayer();
+		}
+	}
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Skill"))
+        {
+            SkillConfig SkillConfig = collision.GetComponentInParent<SkillConfig>();
+            if (SkillConfig.MaskType == maskTypeToActivate)
+            {
+                reduceHealth(SkillConfig.GetDamage());
+            }
+        }
         if (collision.gameObject.CompareTag("Player"))
         {
-            if (damageTimer <= 0)
-            {
-                DamagePlayer();
-            }
+			TryDamagePlayer();
         }
     }
 
 	private void OnParticleCollision(GameObject particle)
 	{
 		SkillConfig particleParent = particle.GetComponentInParent<SkillConfig>();
-		if (particleParent.MaskType == skillElementTypeToDestroy) {
+		if (particleParent.MaskType == maskTypeToActivate) {
 			reduceHealth(particleParent.GetDamage());
 		}
 	}

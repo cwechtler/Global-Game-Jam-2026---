@@ -16,7 +16,7 @@ public class Destroyer : MonoBehaviour
 	{
 		if (collision.CompareTag("Enemy")) {
 			Enemy enemy = collision.GetComponent<Enemy>();
-			maskType type = enemy.SkillElementTypeToDestroy;
+			maskType type = enemy.MaskTypeToActivate;
 			if (skillElementType == type) {
 				enemy.reduceHealth(100);
 			}

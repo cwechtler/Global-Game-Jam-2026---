@@ -5,21 +5,46 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
 	[Tooltip("Spawns random between 2 seconds and 'Max Wait To Spawn' seconds")]
-	[Range(2, 10)] [SerializeField] private int maxWaitToSpawn = 5;
+	[Range(0, 10)] [SerializeField] private int maxWaitToSpawn = 5;
 	[SerializeField] private GameObject[] enemyPrefabs;
 
-	void Start()
+	private PlayerController playerController;
+	private Enemy enemy;
+
+
+    void Start()
 	{
-		StartCoroutine(SpawnEnemies());
+		playerController = FindObjectOfType<PlayerController>();
+        StartCoroutine(SpawnEnemies());
 	}
 
-	private IEnumerator SpawnEnemies()
+    private bool IsVisibleToCamera()
+    {
+        Vector3 viewportPos = Camera.main.WorldToViewportPoint(transform.position);
+
+        if (viewportPos.z < 0)
+            return false;
+
+        return viewportPos.x >= 0f && viewportPos.x <= 1f &&
+               viewportPos.y >= 0f && viewportPos.y <= 1f;
+    }
+
+
+
+    private IEnumerator SpawnEnemies()
 	{
 		while (true) {
-			GameObject prefabToSpawn = enemyPrefabs[UnityEngine.Random.Range(0, enemyPrefabs.Length)];
-			GameObject enemy = Instantiate(prefabToSpawn, transform.position, Quaternion.identity) as GameObject;
-			enemy.transform.SetParent(this.transform);
-			yield return new WaitForSeconds(UnityEngine.Random.Range(2, maxWaitToSpawn));
+			if (!IsVisibleToCamera())
+			{
+                GameObject prefabToSpawn = enemyPrefabs[UnityEngine.Random.Range(0, enemyPrefabs.Length)];
+                Enemy enemyComponent = prefabToSpawn.GetComponent<Enemy>();
+				if (enemyComponent != null && enemyComponent.MaskTypeToActivate == playerController.ActiveMaskType)
+				{
+                    GameObject enemy = Instantiate(prefabToSpawn, transform.position, Quaternion.identity) as GameObject;
+					enemy.transform.SetParent(this.transform);
+				}
+			}
+			yield return new WaitForSeconds(UnityEngine.Random.Range(0, maxWaitToSpawn));
 		}
 	}
 }

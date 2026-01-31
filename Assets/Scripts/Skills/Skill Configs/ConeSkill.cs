@@ -13,4 +13,9 @@ public class ConeSkill : SkillConfig
     public float Angle => angle;
     public bool UseAnimationHitTiming => useAnimationHitTiming;
     public float HitDelay = 0.12f;
+
+    private void OnValidate()
+    {
+        SetAttackType(AttackType.Cone45);
+    }
 }

@@ -12,7 +12,7 @@ public class Pickup : MonoBehaviour
 	{
 		if (collision.CompareTag("Player") && !pickedUp) {
 			pickedUp = true;
-			collision.GetComponent<PlayerController>().AddToInventory(inventoryPrefab);
+			collision.GetComponent<PlayerController>().AddToInventory(inventoryPrefab);  // change to add health
 			GameObject.Destroy(this.gameObject);
 		}
 	}

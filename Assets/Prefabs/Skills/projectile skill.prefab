@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &8797487633216682720
+--- !u!1 &5745014613111111121
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,46 +8,49 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5369932486604152239}
-  - component: {fileID: 8549726984919584234}
+  - component: {fileID: 5745014613111111127}
+  - component: {fileID: 5745014613111111120}
   m_Layer: 0
-  m_Name: Orb Bowling
+  m_Name: projectile skill
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &5369932486604152239
+--- !u!4 &5745014613111111127
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8797487633216682720}
+  m_GameObject: {fileID: 5745014613111111121}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 6.092931, y: -3.7523086, z: -10.40897}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8549726984919584234
+--- !u!114 &5745014613111111120
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8797487633216682720}
+  m_GameObject: {fileID: 5745014613111111121}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a87dc21c47c78d84ba1de02d0ecd5128, type: 3}
+  m_Script: {fileID: 11500000, guid: bde034640fbc88741a1ef133b2f565aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   skillImage: {fileID: 21300000, guid: e4f44dd5c7c2c3a4e9d1b664261f9cc7, type: 3}
   damage: 100
-  firingRate: 10
-  coolDownTime: 0
+  firingRate: 1
+  coolDownTime: 1
   fireOnce: 0
-  maskType: 4
-  radialVFX: {fileID: 5127213136607031899, guid: 041ffe029e373db4fb21a1d9a5425787, type: 3}
-  radius: 4
+  attackType: 5
+  projectileVFX: {fileID: 9128552685099851390, guid: e16f010550d44dd4e82d684b400f6ee2, type: 3}
+  range: 50
+  projectileSpeed: 10
+  areaEffect: 2
+  projectileCollisionSound: {fileID: 0}

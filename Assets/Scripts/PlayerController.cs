@@ -6,13 +6,12 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Rendering;
-
-
 public class PlayerController : MonoBehaviour
 {
 	[SerializeField] private int health = 100;
 	[SerializeField] private Vector2 speed = new Vector2(10, 10);
-	[SerializeField] private float projectileSpeed;
+    [SerializeField] private float meleAnimSpeed = 1f;
+    [SerializeField] private float projectileSpeed;
 	[Space]
 	[Tooltip("Skill Prefabs")]
 	[SerializeField] private GameObject[] skills;
@@ -21,9 +20,9 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private Transform playerTransform;
 	[Space]
 	[SerializeField] private CanvasController canvasController;
-	[SerializeField] private maskType activeMaskType;
+	[SerializeField] private AttackType activeMaskType;
 
-	public maskType ActiveMaskType { get => activeMaskType; }
+	public AttackType ActiveMaskType { get => activeMaskType; }
     public enum MoveDir { None, North, South, East, West }
     public MoveDir currentDirection = MoveDir.None;
 
@@ -34,10 +33,11 @@ public class PlayerController : MonoBehaviour
 	public float FireX { get => fireX; }
 	public float FireY { get => fireY; }
     public bool IsAttacking { get => isAttacking; set => isAttacking = value; }
+    public int Health { get => health; set => health = value; }
 
     private Vector2 FacingDirection;
     private LayerMask enemyLayer;
-    private bool isAttacking = false;
+    public bool isAttacking = false;
 
     private List<GameObject> inventoryItems = new List<GameObject>();
     private readonly HashSet<int> animNameHashes = new HashSet<int>()
@@ -118,20 +118,14 @@ public class PlayerController : MonoBehaviour
             animator.SetTrigger("Hurt");
             SoundManager.instance.PlayHurtClip();
 
-			health -= damage;
-			canvasController.ReduceHealthBar(health);
+			Health -= damage;
+			canvasController.ReduceHealthBar(Health);
 
-			if (health <= 0) {
+			if (Health <= 0) {
 				StartCoroutine(PlayerDeath());
 			}
 		}
 	}
-
-    public void AttackAnimationFinished()
-    {
-        IsAttacking = false;
-        animator.speed = 1f; // reset to normal
-    }
 
 
     private void Move()
@@ -181,7 +175,7 @@ public class PlayerController : MonoBehaviour
 		activeSkillIndex = index;
 		activeSkill = skills[index];
 		SkillConfig activeSkillSkillConfig = activeSkill.GetComponent<SkillConfig>();
-        activeMaskType = activeSkillSkillConfig.MaskType;
+        activeMaskType = activeSkillSkillConfig.AttackType;
         firingRate = activeSkillSkillConfig.FireRate;
 		canvasController.UpdateTextColor();
 	}
@@ -256,18 +250,14 @@ public class PlayerController : MonoBehaviour
         bool enemyInRange = false;
 
         if (skillConfig is ConeSkill cone)
-        {
-            IsAttacking = true;
-            animator.speed = 1f; // fixed attack animation speed
             enemyInRange = ConeHasEnemy(cone, direction);
-        }
         else if (skillConfig is RadialSkill radial)
             enemyInRange = RadialHasEnemy(radial);
 
         else if (skillConfig is ExpandingSkill expanding)
             enemyInRange = ExpandingHasEnemy(expanding);
 
-        else if (skillConfig is Projectile projectile)
+        else if (skillConfig is ProjectileConfig projectile)
             enemyInRange = ProjectileHasEnemy(projectile, direction);
 
         if (!enemyInRange)
@@ -276,11 +266,13 @@ public class PlayerController : MonoBehaviour
         if (skillConfig is ConeSkill coneSkill)
         {
             animator.SetTrigger("Attack");
+            IsAttacking = true;
+            animator.speed = meleAnimSpeed; // fixed attack animation speed
             FireCone(coneSkill, direction);
         }
 
         // Perform the correct attack based on subclass
-        else if (skillConfig is Projectile projectile)
+        else if (skillConfig is ProjectileConfig projectile)
             FireProjectile(projectile, direction);
 
         else if (skillConfig is RadialSkill radial)
@@ -357,6 +349,12 @@ public class PlayerController : MonoBehaviour
 
     private void FireRadial(RadialSkill config)
     {
+        Debug.Log("Firing Radial Skill");
+        if (config.RadialVFX != null) 
+        {
+            GameObject vfx = Instantiate(config.RadialVFX, transform.position, Quaternion.identity);
+            vfx.transform.SetParent(transform);
+        }
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, config.Radius, enemyLayer);
 
         foreach (var hit in hits)
@@ -385,15 +383,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private bool ProjectileHasEnemy(Projectile config, Vector2 dir)
+    private bool ProjectileHasEnemy(ProjectileConfig config, Vector2 dir)
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, config.Range, enemyLayer);
         return hit.collider != null;
     }
 
-    private void FireProjectile(Projectile config, Vector2 dir)
+    private void FireProjectile(ProjectileConfig config, Vector2 dir)
     {
-        GameObject proj = Instantiate(config.gameObject, skillSpawner.position, Quaternion.identity);
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
+        GameObject proj = Instantiate(config.ProjectileVFX, skillSpawner.position, rotation);
+
+        Projectile projectile = proj.GetComponent<Projectile>();
+        projectile.AreaEffect = config.AreaEffect;
+        projectile.Damage = config.GetDamage();
+        //projectile.ProjectileCollisionSound = config.ProjectileCollisionSound.clip;
         proj.GetComponent<Rigidbody2D>().velocity = dir * config.ProjectileSpeed;
     }
 
@@ -430,37 +435,91 @@ public class PlayerController : MonoBehaviour
         {
             if (skill == null)
                 continue;
-
+            // -------------------------
+            // CONE SKILL GIZMO
+            // -------------------------
             ConeSkill cone = skill.GetComponent<ConeSkill>();
-            if (cone == null)
-                continue;
-
-            float radius = cone.Radius;
-            float angle = cone.Angle;
-
-            Vector3 origin = transform.position;
-
-            // Draw radius circle
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(origin, radius);
-
-            // Draw cone edges
-            float halfAngle = angle;
-
-            Vector3 leftDir = Quaternion.Euler(0, 0, halfAngle) * facing;
-            Vector3 rightDir = Quaternion.Euler(0, 0, -halfAngle) * facing;
-
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(origin, origin + leftDir * radius);
-            Gizmos.DrawLine(origin, origin + rightDir * radius);
-
-            // Fill the cone with debug lines (optional but helpful)
-            Gizmos.color = new Color(1, 0, 0, 0.2f);
-            for (float a = -halfAngle; a <= halfAngle; a += 5f)
+            if (cone != null)
             {
-                Vector3 dir = Quaternion.Euler(0, 0, a) * facing;
-                Gizmos.DrawLine(origin, origin + dir * radius);
+                float radius = cone.Radius;
+                float angle = cone.Angle;
+                Vector3 origin = transform.position;
+
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawWireSphere(origin, radius);
+
+                float halfAngle = angle;
+                Vector3 leftDir = Quaternion.Euler(0, 0, halfAngle) * facing;
+                Vector3 rightDir = Quaternion.Euler(0, 0, -halfAngle) * facing;
+
+                Gizmos.color = Color.red;
+                Gizmos.DrawLine(origin, origin + leftDir * radius);
+                Gizmos.DrawLine(origin, origin + rightDir * radius);
+
+                Gizmos.color = new Color(1, 0, 0, 0.2f);
+                for (float a = -halfAngle; a <= halfAngle; a += 5f)
+                {
+                    Vector3 dir = Quaternion.Euler(0, 0, a) * facing;
+                    Gizmos.DrawLine(origin, origin + dir * radius);
+                }
+
+                continue;
             }
+
+            // -------------------------
+            // RADIAL SKILL GIZMO
+            // -------------------------
+            RadialSkill radial = skill.GetComponent<RadialSkill>();
+            if (radial != null)
+            {
+                Gizmos.color = Color.cyan;
+                Gizmos.DrawWireSphere(transform.position, radial.Radius);
+                continue;
+            }
+
+            // -------------------------
+            // EXPANDING SKILL GIZMO
+            // -------------------------
+            ExpandingSkill expanding = skill.GetComponent<ExpandingSkill>();
+            if (expanding != null)
+            {
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireSphere(transform.position, expanding.MaxRadius);
+                continue;
+            }
+
+
+
+            //ConeSkill cone = skill.GetComponent<ConeSkill>();
+            //if (cone == null)
+            //    continue;
+
+            //float radius = cone.Radius;
+            //float angle = cone.Angle;
+
+            //Vector3 origin = transform.position;
+
+            //// Draw radius circle
+            //Gizmos.color = Color.yellow;
+            //Gizmos.DrawWireSphere(origin, radius);
+
+            //// Draw cone edges
+            //float halfAngle = angle;
+
+            //Vector3 leftDir = Quaternion.Euler(0, 0, halfAngle) * facing;
+            //Vector3 rightDir = Quaternion.Euler(0, 0, -halfAngle) * facing;
+
+            //Gizmos.color = Color.red;
+            //Gizmos.DrawLine(origin, origin + leftDir * radius);
+            //Gizmos.DrawLine(origin, origin + rightDir * radius);
+
+            //// Fill the cone with debug lines (optional but helpful)
+            //Gizmos.color = new Color(1, 0, 0, 0.2f);
+            //for (float a = -halfAngle; a <= halfAngle; a += 5f)
+            //{
+            //    Vector3 dir = Quaternion.Euler(0, 0, a) * facing;
+            //    Gizmos.DrawLine(origin, origin + dir * radius);
+            //}
         }
     }
 
@@ -548,8 +607,11 @@ public class PlayerController : MonoBehaviour
 	private void SetAnimations(float inputX, float inputY)
     {
         // Animation speed based on stick magnitude
-        float moveAmount = new Vector2(inputX, inputY).magnitude;
-        animator.speed = Mathf.Lerp(0.5f, 1.5f, moveAmount);
+        if (!isAttacking)
+        {
+            float moveAmount = new Vector2(inputX, inputY).magnitude;
+            animator.speed = Mathf.Lerp(0.5f, 1.5f, moveAmount);
+        }
 
         animator.SetBool("RunNorth", false);
         animator.SetBool("RunSouth", false);

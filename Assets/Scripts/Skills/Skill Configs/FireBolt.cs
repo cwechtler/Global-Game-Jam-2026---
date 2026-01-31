@@ -18,7 +18,12 @@ public class FireBolt : SkillConfig
 	private bool stop = false;
 	ParticleSystem.MainModule main;
 
-	void Start()
+    private void OnValidate()
+    {
+        SetAttackType(AttackType.Projectile);
+    }
+
+    void Start()
 	{
 		transform.up = GetComponent<Rigidbody2D>().velocity;
 		if (ProjectileParticleSystem) {
@@ -50,7 +55,7 @@ public class FireBolt : SkillConfig
 				if (col.CompareTag("Enemy")) {
 					Enemy enemy = col.GetComponent<Enemy>();
 
-					if (enemy.MaskTypeToActivate == maskType) {
+					if (enemy.MaskTypeToActivate == AttackType) {
 						enemy.reduceHealth(GetDamage());
 					}
 				}

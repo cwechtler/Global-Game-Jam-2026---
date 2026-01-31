@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-	[SerializeField] private maskType maskTypeToActivate;
+	[SerializeField] private AttackType maskTypeToActivate;
 
 	[SerializeField] private AudioClip deathClip;
 	[Space]
@@ -23,7 +23,7 @@ public class Enemy : MonoBehaviour
     // health changes based on state
     // no ranged atack, they have to touch the player to inflict damage
 
-    public maskType MaskTypeToActivate { get { return maskTypeToActivate; } }
+    public AttackType MaskTypeToActivate { get { return maskTypeToActivate; } }
 	
 	private AIPath aipath;
 	private AIDestinationSetter destinationSetter;
@@ -157,7 +157,7 @@ public class Enemy : MonoBehaviour
         if (collision.CompareTag("Skill"))
         {
             SkillConfig SkillConfig = collision.GetComponentInParent<SkillConfig>();
-            if (SkillConfig.MaskType == maskTypeToActivate)
+            if (SkillConfig.AttackType == maskTypeToActivate)
             {
                 reduceHealth(SkillConfig.GetDamage());
             }
@@ -171,7 +171,7 @@ public class Enemy : MonoBehaviour
 	private void OnParticleCollision(GameObject particle)
 	{
 		SkillConfig particleParent = particle.GetComponentInParent<SkillConfig>();
-		if (particleParent.MaskType == maskTypeToActivate) {
+		if (particleParent.AttackType == maskTypeToActivate) {
 			reduceHealth(particleParent.GetDamage());
 		}
 	}

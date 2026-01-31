@@ -12,7 +12,7 @@ public enum DestructibleState
 
 public class Destructible : MonoBehaviour
 {
-	[SerializeField] private maskType skillRequiredToDestroy;
+	[SerializeField] private AttackType skillRequiredToDestroy;
 	[Space]
 	[Tooltip("Check box to select a prefab item to be dropped on destroy.")]
 	[SerializeField] private bool dropItem = true;
@@ -47,7 +47,7 @@ public class Destructible : MonoBehaviour
 	{
 		if (collision.CompareTag("Skill") && !dropped) {
 			SkillConfig skill = collision.GetComponentInParent<SkillConfig>();
-			if (skill.MaskType == skillRequiredToDestroy) {
+			if (skill.AttackType == skillRequiredToDestroy) {
 				float skillDuration = skill.CoolDownTime;		
 				StartCoroutine(UpdateSprite(skillDuration));		
 			}
@@ -57,7 +57,7 @@ public class Destructible : MonoBehaviour
 	private void OnParticleCollision(GameObject particle)
 	{
 		SkillConfig particleParent = particle.GetComponentInParent<SkillConfig>();
-		if (particleParent.MaskType == skillRequiredToDestroy && !dropped) {
+		if (particleParent.AttackType == skillRequiredToDestroy && !dropped) {
 			float skillDuration = particleParent.CoolDownTime;
 			StartCoroutine(UpdateSprite(skillDuration));
 		}

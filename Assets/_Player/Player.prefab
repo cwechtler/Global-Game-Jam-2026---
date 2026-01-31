@@ -146,8 +146,7 @@ MonoBehaviour:
   speed: {x: 10, y: 10}
   projectileSpeed: 15
   skills:
-  - {fileID: 8216344129556163347, guid: 8428783c4e02fde418fb8b6cbb299973, type: 3}
-  - {fileID: 7859413831658676518, guid: 5116348c0a9558b49b3e2d2f00045d7b, type: 3}
+  - {fileID: 4298591392917026362, guid: b0e0fe1c93f96854997b81e00564f7a8, type: 3}
   skillSpawner: {fileID: 1147470130251960737}
   skillSpawnPoint: {fileID: 1147470131197701088}
   activeSkillContainer: {fileID: 1147470131743012527}

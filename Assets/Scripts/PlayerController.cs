@@ -5,6 +5,7 @@ using System.Linq;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Rendering;
 
 
 public class PlayerController : MonoBehaviour
@@ -32,8 +33,13 @@ public class PlayerController : MonoBehaviour
 	public List<GameObject> InventoryItems { get => inventoryItems; set => inventoryItems = value; }
 	public float FireX { get => fireX; }
 	public float FireY { get => fireY; }
+    public bool IsAttacking { get => isAttacking; set => isAttacking = value; }
 
-	private List<GameObject> inventoryItems = new List<GameObject>();
+    private Vector2 FacingDirection;
+    private LayerMask enemyLayer;
+    private bool isAttacking = false;
+
+    private List<GameObject> inventoryItems = new List<GameObject>();
     private readonly HashSet<int> animNameHashes = new HashSet<int>()
 	{
 		Animator.StringToHash("HurtNorth"),
@@ -57,27 +63,35 @@ public class PlayerController : MonoBehaviour
 	private float firingRate, fireX, fireY;
 	private float[] coolDownTimes;
 	private float[] timerTimes;
-	private bool[] skillWasCast;
-	public int experiencePoints;
+    private float[] nextFireTimes;
+    private bool[] skillWasCast;
+    private bool[] hasFiredOnce;
+
+    public int experiencePoints;
 
 	void Start()
 	{
 		myRigidbody2D = GetComponent<Rigidbody2D>();
 		animator = GetComponentInChildren<Animator>(true);
+        enemyLayer = LayerMask.GetMask("Enemy");
 
-		//SetActiveSkill(0);
+        //SetActiveSkill(0);
 
-		//coolDownTimes = new float[skills.Length];
-		//timerTimes = new float[skills.Length];
-		//skillWasCast = new bool[skills.Length];
+        coolDownTimes = new float[skills.Length];
+        timerTimes = new float[skills.Length];
+        skillWasCast = new bool[skills.Length];
+        nextFireTimes = new float[skills.Length];
+        hasFiredOnce = new bool[skills.Length];
 
-		//for (int i = 0; i < skills.Length; i++) {
-		//	SkillConfig skill = skills[i].GetComponent<SkillConfig>();
-		//	coolDownTimes[i] = skill.CoolDownTime;
-		//	canvasController.SetCoolDownTime(i, coolDownTimes[i]);
-		//	canvasController.SetSkillImages(i, skill.SkillImage);
-		//}
-	}
+
+        for (int i = 0; i < skills.Length; i++)
+        {
+            SkillConfig skill = skills[i].GetComponent<SkillConfig>();
+            coolDownTimes[i] = skill.CoolDownTime;
+            canvasController.SetCoolDownTime(i, coolDownTimes[i]);
+            canvasController.SetSkillImages(i, skill.SkillImage);
+        }
+    }
 
 	void Update()
 	{
@@ -85,7 +99,7 @@ public class PlayerController : MonoBehaviour
 			Move();
 
 			SelectSkill();
-			//Fire();
+			Fire();
 		}
 		if (Input.GetButtonDown("Enter"))
 		{
@@ -113,7 +127,14 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private void Move()
+    public void AttackAnimationFinished()
+    {
+        IsAttacking = false;
+        animator.speed = 1f; // reset to normal
+    }
+
+
+    private void Move()
 	{
 		float inputY = Input.GetAxis("Vertical");
 		float inputX = Input.GetAxis("Horizontal");
@@ -128,7 +149,13 @@ public class PlayerController : MonoBehaviour
 			}
 		}
 
-		myRigidbody2D.velocity = new Vector2(speed.x * inputX, speed.y * inputY);
+        if (inputX != 0 || inputY != 0)
+        {
+            FacingDirection = new Vector2(inputX, inputY).normalized;
+        }
+        //Debug.Log("Facing Direction: " + FacingDirection);
+
+        myRigidbody2D.velocity = new Vector2(speed.x * inputX, speed.y * inputY);
 		moveHorizontaly = Mathf.Abs(myRigidbody2D.velocity.x) > Mathf.Epsilon;
 		moveVertically = Mathf.Abs(myRigidbody2D.velocity.y) > Mathf.Epsilon;
 
@@ -190,77 +217,324 @@ public class PlayerController : MonoBehaviour
         }
 	}
 
-	private void Fire() {
-		fireY = Input.GetAxis("SpellVertical");
-		fireX = Input.GetAxis("SpellHorizontal");
+    private void Fire()
+    {
+        Vector2 direction = FacingDirection;
+        if (direction == Vector2.zero)
+            return;
 
-		if (Input.touchCount == 2 && Input.touches[0].phase == TouchPhase.Began)
-		{
-			Debug.Log("Right Click (Two Finger Tap)");
-			// Handle right-click behavior here
-		}
+        // Rotate skill spawner to face movement direction
+        skillSpawner.eulerAngles =
+            new Vector3(0, 0, Mathf.Atan2(-direction.y, -direction.x) * Mathf.Rad2Deg);
 
-		if (Input.GetMouseButton(1) || (Input.touchCount == 2 && Input.touches[0].phase == TouchPhase.Began)) {
-			Vector3 direction = MousePointerDirection();
+        // Loop through ALL skills the player has
+        for (int index = 0; index < skills.Length; index++)
+        {
+            TryFireSkill(index, direction);
+        }
 
-			fireX = Mathf.Clamp(direction.x, -1, 1);
-			fireY = Mathf.Clamp(direction.y, -1, 1);
-		}
+        UpdateSkillCooldowns();
+    }
 
-		if ((fireX != 0 || fireY != 0)) {
-			skillSpawner.eulerAngles = new Vector3(0, 0, Mathf.Atan2(-fireY, -fireX) * 180 / Mathf.PI);
-			if (skillWasCast[activeSkillIndex] == false) {
-				skillWasCast[activeSkillIndex] = true;
-				string skillType = activeSkill.GetComponent<SkillConfig>().MaskType.ToString();
-				//foreach (var animator in animator) {
-					animator.SetTrigger("Attack");
-				//}
-				switch (skillType) {
-					//case { skill that required casting it }:
-					// CastSkill();
-					//	break;
-					//case { skill that required placing it }:
-					//	PlaceSkill();
-					//	break;
-					default:
-						//StartCoroutine(ThrowSkill(fireX, fireY));
-						break;
-				}
-			}
-		}
+    private void TryFireSkill(int index, Vector2 direction)
+    {
+        SkillConfig skillConfig = skills[index].GetComponent<SkillConfig>();
 
-		for (int i = 0; i < skills.Length; i++) {
-			if (skillWasCast[i]) {
-				if (timerTimes[i] < coolDownTimes[i]) {
-					timerTimes[i] += Time.deltaTime;
-					canvasController.CoolDownTimer(timerTimes[i], coolDownTimes[i], i);
-				}
-				else if (timerTimes[i] >= coolDownTimes[i]) {
-					timerTimes[i] = 0;
-					skillWasCast[i] = false;
-				}
-			}
-		}
-	}
+        // Fire rate check
+        if (Time.time < nextFireTimes[index])
+            return;
 
-	private void CastSkill() {
-		GameObject spell = Instantiate(activeSkill, transform.position, Quaternion.identity, activeSkillContainer) as GameObject;
-	}
+        // Cooldown check
+        if (skillWasCast[index])
+            return;
 
-	private void PlaceSkill() {
-		GameObject spell = Instantiate(activeSkill, skillSpawnPoint.position, Quaternion.identity) as GameObject;
-	}
+        // FireOnce check
+        if (skillConfig.FireOnce && hasFiredOnce[index])
+            return;
 
-	private IEnumerator ThrowSkill(float fireX, float fireY)
-	{
-		GameObject SkillConfig = Instantiate(activeSkill, transform.position, Quaternion.identity) as GameObject;
-		Rigidbody2D SkillConfigRidgidbody2D = SkillConfig.GetComponent<Rigidbody2D>();
-		SkillConfigRidgidbody2D.velocity = new Vector3(fireX, fireY, 0);
-		SkillConfigRidgidbody2D.velocity = (Vector3.Normalize(SkillConfigRidgidbody2D.velocity) * projectileSpeed);
-		yield return new WaitForSeconds(firingRate);
-	}
+        // Enemy detection
+        bool enemyInRange = false;
 
-	private Vector3 MousePointerDirection()
+        if (skillConfig is ConeSkill cone)
+        {
+            IsAttacking = true;
+            animator.speed = 1f; // fixed attack animation speed
+            enemyInRange = ConeHasEnemy(cone, direction);
+        }
+        else if (skillConfig is RadialSkill radial)
+            enemyInRange = RadialHasEnemy(radial);
+
+        else if (skillConfig is ExpandingSkill expanding)
+            enemyInRange = ExpandingHasEnemy(expanding);
+
+        else if (skillConfig is Projectile projectile)
+            enemyInRange = ProjectileHasEnemy(projectile, direction);
+
+        if (!enemyInRange)
+            return; // Skip firing if no enemy
+
+        if (skillConfig is ConeSkill coneSkill)
+        {
+            animator.SetTrigger("Attack");
+            FireCone(coneSkill, direction);
+        }
+
+        // Perform the correct attack based on subclass
+        else if (skillConfig is Projectile projectile)
+            FireProjectile(projectile, direction);
+
+        else if (skillConfig is RadialSkill radial)
+            FireRadial(radial);
+
+        else if (skillConfig is ExpandingSkill expanding)
+            StartCoroutine(FireExpanding(expanding));
+
+        // Set next fire time
+        nextFireTimes[index] = Time.time + skillConfig.FireRate;
+
+        // Start cooldown
+        skillWasCast[index] = true;
+
+        // Mark FireOnce skills
+        if (skillConfig.FireOnce)
+            hasFiredOnce[index] = true;
+    }
+
+    private bool ConeHasEnemy(ConeSkill config, Vector2 facing)
+    {
+        float radius = config.Radius;
+        float angleLimit = Mathf.Cos(config.Angle * Mathf.Deg2Rad);
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius, enemyLayer);
+
+        foreach (var hit in hits)
+        {
+            //Debug.Log(hit);
+            Vector2 toTarget = (hit.transform.position - transform.position).normalized;
+            float dot = Vector2.Dot(facing, toTarget);
+
+            if (dot >= angleLimit)
+                return true;
+        }
+
+        return false;
+    }
+
+
+    private void FireCone(ConeSkill config, Vector2 facing)
+    {
+        float radius = config.Radius;
+        float angleLimit = Mathf.Cos(45f * Mathf.Deg2Rad);
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius, enemyLayer);
+
+        foreach (var hit in hits)
+        {
+            Vector2 toTarget = (hit.transform.position - transform.position).normalized;
+            float dot = Vector2.Dot(facing, toTarget);
+
+            if (dot >= angleLimit)
+            {
+                if (config.UseAnimationHitTiming)
+                    StartCoroutine(DelayedHit(hit, config));
+                else
+                    hit.GetComponentInParent<Enemy>().reduceHealth(config.GetDamage());
+            }
+
+        }
+    }
+    private IEnumerator DelayedHit(Collider2D hit, ConeSkill config)
+    {
+        yield return new WaitForSeconds(config.HitDelay); // add this to your config
+        hit.GetComponentInParent<Enemy>().reduceHealth(config.GetDamage());
+    }
+
+
+    private bool RadialHasEnemy(RadialSkill config)
+    {
+        return Physics2D.OverlapCircle(transform.position, config.Radius, enemyLayer);
+    }
+
+    private void FireRadial(RadialSkill config)
+    {
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, config.Radius, enemyLayer);
+
+        foreach (var hit in hits)
+            hit.GetComponent<Enemy>().reduceHealth(config.GetDamage());
+    }
+
+    private bool ExpandingHasEnemy(ExpandingSkill config)
+    {
+        return Physics2D.OverlapCircle(transform.position, config.StartRadius, enemyLayer);
+    }
+
+    private IEnumerator FireExpanding(ExpandingSkill config)
+    {
+        float radius = 0f;
+
+        while (radius < config.MaxRadius)
+        {
+            radius += config.ExpandSpeed * Time.deltaTime;
+
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, radius, enemyLayer);
+
+            foreach (var hit in hits)
+                hit.GetComponent<Enemy>().reduceHealth(config.GetDamage());
+
+            yield return null;
+        }
+    }
+
+    private bool ProjectileHasEnemy(Projectile config, Vector2 dir)
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, config.Range, enemyLayer);
+        return hit.collider != null;
+    }
+
+    private void FireProjectile(Projectile config, Vector2 dir)
+    {
+        GameObject proj = Instantiate(config.gameObject, skillSpawner.position, Quaternion.identity);
+        proj.GetComponent<Rigidbody2D>().velocity = dir * config.ProjectileSpeed;
+    }
+
+    private void UpdateSkillCooldowns()
+    {
+        for (int i = 0; i < skills.Length; i++)
+        {
+            if (skillWasCast[i])
+            {
+                if (timerTimes[i] < coolDownTimes[i])
+                {
+                    timerTimes[i] += Time.deltaTime;
+                    canvasController.CoolDownTimer(timerTimes[i], coolDownTimes[i], i);
+                }
+                else if (timerTimes[i] >= coolDownTimes[i])
+                {
+                    timerTimes[i] = 0;
+                    skillWasCast[i] = false;
+                }
+            }
+        }
+    }
+    private void OnDrawGizmos()
+    {
+        if (skills == null)
+            return;
+
+        // Always draw something, even if not moving
+        Vector2 facing = FacingDirection;
+        if (facing == Vector2.zero)
+            facing = Vector2.right;
+
+        foreach (var skill in skills)
+        {
+            if (skill == null)
+                continue;
+
+            ConeSkill cone = skill.GetComponent<ConeSkill>();
+            if (cone == null)
+                continue;
+
+            float radius = cone.Radius;
+            float angle = cone.Angle;
+
+            Vector3 origin = transform.position;
+
+            // Draw radius circle
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(origin, radius);
+
+            // Draw cone edges
+            float halfAngle = angle;
+
+            Vector3 leftDir = Quaternion.Euler(0, 0, halfAngle) * facing;
+            Vector3 rightDir = Quaternion.Euler(0, 0, -halfAngle) * facing;
+
+            Gizmos.color = Color.red;
+            Gizmos.DrawLine(origin, origin + leftDir * radius);
+            Gizmos.DrawLine(origin, origin + rightDir * radius);
+
+            // Fill the cone with debug lines (optional but helpful)
+            Gizmos.color = new Color(1, 0, 0, 0.2f);
+            for (float a = -halfAngle; a <= halfAngle; a += 5f)
+            {
+                Vector3 dir = Quaternion.Euler(0, 0, a) * facing;
+                Gizmos.DrawLine(origin, origin + dir * radius);
+            }
+        }
+    }
+
+    //private void Fire() {
+    //	fireY = Input.GetAxis("SpellVertical");
+    //	fireX = Input.GetAxis("SpellHorizontal");
+
+    //	if (Input.touchCount == 2 && Input.touches[0].phase == TouchPhase.Began)
+    //	{
+    //		Debug.Log("Right Click (Two Finger Tap)");
+    //		// Handle right-click behavior here
+    //	}
+
+    //	if (Input.GetMouseButton(1) || (Input.touchCount == 2 && Input.touches[0].phase == TouchPhase.Began)) {
+    //		Vector3 direction = MousePointerDirection();
+
+    //		fireX = Mathf.Clamp(direction.x, -1, 1);
+    //		fireY = Mathf.Clamp(direction.y, -1, 1);
+    //	}
+
+    //	if ((fireX != 0 || fireY != 0)) {
+    //		skillSpawner.eulerAngles = new Vector3(0, 0, Mathf.Atan2(-fireY, -fireX) * 180 / Mathf.PI);
+    //		if (skillWasCast[activeSkillIndex] == false) {
+    //			skillWasCast[activeSkillIndex] = true;
+    //			string skillType = activeSkill.GetComponent<SkillConfig>().MaskType.ToString();
+    //			//foreach (var animator in animator) {
+    //				animator.SetTrigger("Attack");
+    //			//}
+    //			switch (skillType) {
+    //				//case { skill that required casting it }:
+    //				// CastSkill();
+    //				//	break;
+    //				//case { skill that required placing it }:
+    //				//	PlaceSkill();
+    //				//	break;
+    //				default:
+    //					//StartCoroutine(ThrowSkill(fireX, fireY));
+    //					break;
+    //			}
+    //		}
+    //	}
+
+    //	for (int i = 0; i < skills.Length; i++) {
+    //		if (skillWasCast[i]) {
+    //			if (timerTimes[i] < coolDownTimes[i]) {
+    //				timerTimes[i] += Time.deltaTime;
+    //				canvasController.CoolDownTimer(timerTimes[i], coolDownTimes[i], i);
+    //			}
+    //			else if (timerTimes[i] >= coolDownTimes[i]) {
+    //				timerTimes[i] = 0;
+    //				skillWasCast[i] = false;
+    //			}
+    //		}
+    //	}
+    //}
+
+    //   private void CastSkill() {
+    //	GameObject spell = Instantiate(activeSkill, transform.position, Quaternion.identity, activeSkillContainer) as GameObject;
+    //}
+
+    //private void PlaceSkill() {
+    //	GameObject spell = Instantiate(activeSkill, skillSpawnPoint.position, Quaternion.identity) as GameObject;
+    //}
+
+    //private IEnumerator ThrowSkill(float fireX, float fireY)
+    //{
+    //	GameObject SkillConfig = Instantiate(activeSkill, transform.position, Quaternion.identity) as GameObject;
+    //	Rigidbody2D SkillConfigRidgidbody2D = SkillConfig.GetComponent<Rigidbody2D>();
+    //	SkillConfigRidgidbody2D.velocity = new Vector3(fireX, fireY, 0);
+    //	SkillConfigRidgidbody2D.velocity = (Vector3.Normalize(SkillConfigRidgidbody2D.velocity) * projectileSpeed);
+    //	yield return new WaitForSeconds(firingRate);
+    //}
+
+    private Vector3 MousePointerDirection()
 	{
 		Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		mousePosition.z += Camera.main.nearClipPlane;

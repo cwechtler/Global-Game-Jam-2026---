@@ -5,7 +5,11 @@ using UnityEngine;
 public enum maskType
 {
 	mask1,
-	mask2
+	mask2,
+    Cone45,
+    Radial,
+    ExpandingRadius,
+    Projectile
     // Add new skill element types here
 }
 

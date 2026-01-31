@@ -7,7 +7,7 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-	[SerializeField] private AttackType maskTypeToActivate;
+	//[SerializeField] private AttackType maskTypeToActivate;
 
 	[SerializeField] private AudioClip deathClip;
 	[Space]
@@ -23,7 +23,7 @@ public class Enemy : MonoBehaviour
     // health changes based on state
     // no ranged atack, they have to touch the player to inflict damage
 
-    public AttackType MaskTypeToActivate { get { return maskTypeToActivate; } }
+    //public AttackType MaskTypeToActivate { get { return maskTypeToActivate; } }
 	
 	private AIPath aipath;
 	private AIDestinationSetter destinationSetter;
@@ -49,15 +49,15 @@ public class Enemy : MonoBehaviour
 
 	void Update()
 	{
-        bool shouldStop = playerController.ActiveMaskType != maskTypeToActivate;
+        bool isMaskOn = playerController.IsMaskOn;
 
-        if (shouldStop && !isStopped)
+        if (isMaskOn)
         {
-            StopEnemy();
+            cursedEnemy();
         }
-        else if (!shouldStop && isStopped)
+        else
         {
-            startEnemy();
+            overworldEnemy();
         }
 
         if (destinationSetter.target != player.transform)
@@ -80,14 +80,10 @@ public class Enemy : MonoBehaviour
 		}
 	}
 
-    private void startEnemy()
+    private void overworldEnemy()
     {
-        isStopped = false;
         mainSprite.SetActive(true);
         alternateSprite.SetActive(false);
-        aipath.canMove = true;
-        myRigidbody.gravityScale = 1;
-        myRigidbody.bodyType = RigidbodyType2D.Dynamic;
 
         var guo = new GraphUpdateObject(capsuleCollider.bounds);
         guo.modifyWalkability = true;
@@ -95,19 +91,14 @@ public class Enemy : MonoBehaviour
         AstarPath.active.UpdateGraphs(guo);
     }
 
-    private void StopEnemy()
+    private void cursedEnemy()
     {
-        isStopped = true;
         mainSprite.SetActive(false);
         alternateSprite.SetActive(true);
-        aipath.canMove = false;
-        myRigidbody.gravityScale = 0;
-        myRigidbody.velocity = new Vector2(0, 0);
-        myRigidbody.bodyType = RigidbodyType2D.Static;
 
         var guo = new GraphUpdateObject(capsuleCollider.bounds);
         guo.modifyWalkability = true;
-        guo.setWalkability = false;
+        guo.setWalkability = true;
         AstarPath.active.UpdateGraphs(guo);
     }
 
@@ -118,7 +109,7 @@ public class Enemy : MonoBehaviour
 			Destroy(gameObject);
 			SoundManager.instance.PlayOneShot(deathClip);
 			GameController.instance.EnemiesKilled++;
-			GameController.instance.AddEnemyType(maskTypeToActivate);
+			//GameController.instance.AddEnemyType(maskTypeToActivate);
 
 			////Drop Experience - MT
 			//GameObject drop = Instantiate(expDrop, transform.position, transform.rotation) as GameObject;
@@ -157,10 +148,7 @@ public class Enemy : MonoBehaviour
         if (collision.CompareTag("Skill"))
         {
             SkillConfig SkillConfig = collision.GetComponentInParent<SkillConfig>();
-            if (SkillConfig.AttackType == maskTypeToActivate)
-            {
-                reduceHealth(SkillConfig.GetDamage());
-            }
+            reduceHealth(SkillConfig.GetDamage());
         }
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -171,9 +159,7 @@ public class Enemy : MonoBehaviour
 	private void OnParticleCollision(GameObject particle)
 	{
 		SkillConfig particleParent = particle.GetComponentInParent<SkillConfig>();
-		if (particleParent.AttackType == maskTypeToActivate) {
-			reduceHealth(particleParent.GetDamage());
-		}
+		reduceHealth(particleParent.GetDamage());		
 	}
 
 	private void FlipDirection()

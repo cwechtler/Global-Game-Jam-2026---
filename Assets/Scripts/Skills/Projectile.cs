@@ -7,10 +7,17 @@ public class Projectile : MonoBehaviour
     private float areaEffect = 3f;
     private float damage = 10f;
     private AudioClip projectileCollisionSound;
+    private Animator animator;
 
     public float AreaEffect { get => areaEffect; set => areaEffect = value; }
     public float Damage { get => damage; set => damage = value; }
     public AudioClip ProjectileCollisionSound { get => projectileCollisionSound; set => projectileCollisionSound = value; }
+
+    private void Start()
+    {
+        animator = GetComponent<Animator>();
+
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -19,7 +26,7 @@ public class Projectile : MonoBehaviour
             this.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
             var colls = Physics2D.OverlapCircleAll(transform.position, AreaEffect);
             Debug.Log("Projectile hit something, colliders found: " + colls.Length);
-            // animator.setbool("HitSomething");
+            animator.SetBool("HitSomething", true);
             foreach (var col in colls)
             {
                 Debug.Log("Collider found: " + col.name + " with tag: " + col.tag);
@@ -30,9 +37,17 @@ public class Projectile : MonoBehaviour
                     enemy.reduceHealth(damage);              
                 }
             }
-            Destroy(gameObject);
 
-            //Destroy(gameObject, ProjectileCollisionSound.length); // Delay destruction to allow animation to finish.
+            AnimatorClipInfo[] clips = animator.GetCurrentAnimatorClipInfo(0);
+            if (clips.Length > 0)
+            {
+                float clipLength = clips[0].clip.length;
+                Destroy(gameObject, clipLength);
+            }
+            else 
+            { 
+                Destroy(gameObject); 
+            }
         }
     }
 

@@ -12,7 +12,8 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private Vector2 speed = new Vector2(10, 10);
     [SerializeField] private float meleAnimSpeed = 1f;
     [SerializeField] private float projectileSpeed;
-	[Space]
+    [SerializeField] private float spawnOffset = 0.5f; // how far in front of player
+    [Space]
 	[Tooltip("Skill Prefabs")]
 	[SerializeField] private GameObject[] skills;
 	[SerializeField] private Transform skillSpawner, skillSpawnPoint, activeSkillContainer;
@@ -20,12 +21,11 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private Transform playerTransform;
 	[Space]
 	[SerializeField] private CanvasController canvasController;
-	[SerializeField] private AttackType activeMaskType;
+	[SerializeField] private bool isMaskOn;
 
-	public AttackType ActiveMaskType { get => activeMaskType; }
+	public bool IsMaskOn { get => isMaskOn; }
     public enum MoveDir { None, North, South, East, West }
     public MoveDir currentDirection = MoveDir.None;
-
 
 
     public int ExperiencePoints { get => experiencePoints; set => experiencePoints = value; }
@@ -112,7 +112,15 @@ public class PlayerController : MonoBehaviour
 		canvasController.AddInventoryItem(inventoryPrefab);
 	}
 
-	public void ReduceHealth(int damage)
+    public void PickedupMask() { 
+        isMaskOn = true;
+    }
+    public void RemoveMask()
+    {
+        isMaskOn = false;
+    }
+
+    public void ReduceHealth(int damage)
 	{
 		if (!isDead) {
             animator.SetTrigger("Hurt");
@@ -175,7 +183,7 @@ public class PlayerController : MonoBehaviour
 		activeSkillIndex = index;
 		activeSkill = skills[index];
 		SkillConfig activeSkillSkillConfig = activeSkill.GetComponent<SkillConfig>();
-        activeMaskType = activeSkillSkillConfig.AttackType;
+        //isMaskOn = activeSkillSkillConfig.AttackType;
         firingRate = activeSkillSkillConfig.FireRate;
 		canvasController.UpdateTextColor();
 	}
@@ -211,6 +219,22 @@ public class PlayerController : MonoBehaviour
         }
 	}
 
+
+    private void UpdateSkillSpawner(Vector2 direction)
+    {
+        if (direction == Vector2.zero)
+            return;
+
+        direction = direction.normalized;
+
+        // Rotate to face direction
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        skillSpawner.rotation = Quaternion.Euler(0, 0, angle);
+
+        // Move it in front of the player
+        skillSpawner.position = (Vector2)transform.position + direction * spawnOffset;
+    }
+
     private void Fire()
     {
         Vector2 direction = FacingDirection;
@@ -218,8 +242,9 @@ public class PlayerController : MonoBehaviour
             return;
 
         // Rotate skill spawner to face movement direction
-        skillSpawner.eulerAngles =
-            new Vector3(0, 0, Mathf.Atan2(-direction.y, -direction.x) * Mathf.Rad2Deg);
+        UpdateSkillSpawner(direction);
+        //skillSpawner.eulerAngles =
+        //    new Vector3(0, 0, Mathf.Atan2(-direction.y, -direction.x) * Mathf.Rad2Deg);
 
         // Loop through ALL skills the player has
         for (int index = 0; index < skills.Length; index++)
@@ -262,6 +287,13 @@ public class PlayerController : MonoBehaviour
 
         if (!enemyInRange)
             return; // Skip firing if no enemy
+
+        if (skillConfig is RadialSkill radialSkill && radialSkill.RadialVFX != null)
+            Instantiate(radialSkill.RadialVFX, transform.position, Quaternion.identity);
+
+        //if (skillConfig is ExpandingSkill expandingSkill && expandingSkill.ExpandingVFX != null)
+        //    Instantiate(expandingSkill.ExpandingVFX, transform.position, Quaternion.identity);
+
 
         if (skillConfig is ConeSkill coneSkill)
         {
@@ -349,12 +381,12 @@ public class PlayerController : MonoBehaviour
 
     private void FireRadial(RadialSkill config)
     {
-        Debug.Log("Firing Radial Skill");
-        if (config.RadialVFX != null) 
-        {
-            GameObject vfx = Instantiate(config.RadialVFX, transform.position, Quaternion.identity);
-            vfx.transform.SetParent(transform);
-        }
+        //Debug.Log("Firing Radial Skill");
+        //if (config.RadialVFX != null) 
+        //{
+        //    GameObject vfx = Instantiate(config.RadialVFX, transform.position, Quaternion.identity);
+        //    vfx.transform.SetParent(transform);
+        //}
         Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, config.Radius, enemyLayer);
 
         foreach (var hit in hits)

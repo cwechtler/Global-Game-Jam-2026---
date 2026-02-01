@@ -10,8 +10,6 @@ using TMPro;
 
 public class Enemy : MonoBehaviour
 {
-	[SerializeField] private maskType maskTypeToActivate;
-
 	[SerializeField] private AudioClip deathClip;
 	[Space]
     [SerializeField] private float health = 1f;
@@ -33,9 +31,6 @@ public class Enemy : MonoBehaviour
 	public GameObject EnemyDamageDoneObject; 
 
     // health changes based on state
-    // no ranged atack, they have to touch the player to inflict damage
-
-    public maskType MaskTypeToActivate { get { return maskTypeToActivate; } }
 	
 	private AIPath aipath;
 	private AIDestinationSetter destinationSetter;
@@ -43,7 +38,7 @@ public class Enemy : MonoBehaviour
 	private Rigidbody2D myRigidbody;
     private float damageTimer;
 	private bool isDead;
-    private bool isStopped;
+    private bool isSwitched;
     private PlayerController playerController;
     private CapsuleCollider2D capsuleCollider;
 
@@ -61,15 +56,15 @@ public class Enemy : MonoBehaviour
 
 	void Update()
 	{
-        bool shouldStop = playerController.ActiveMaskType != maskTypeToActivate;
+        bool isMaskOn = playerController.IsMaskOn;
 
-        if (shouldStop && !isStopped)
+        if (isMaskOn && !isSwitched)
         {
-            StopEnemy();
+            cursedEnemy();
         }
-        else if (!shouldStop && isStopped)
+        else if(!isMaskOn && isSwitched)
         {
-            startEnemy();
+            overworldEnemy();
         }
 
         if (destinationSetter.target != player.transform)
@@ -92,36 +87,29 @@ public class Enemy : MonoBehaviour
 		}		 
 	}
 
-    private void startEnemy()
+    private void overworldEnemy()
     {
-        isStopped = false;
+        isSwitched= false;
         mainSprite.SetActive(true);
         alternateSprite.SetActive(false);
-        aipath.canMove = true;
-        myRigidbody.gravityScale = 1;
-        myRigidbody.bodyType = RigidbodyType2D.Dynamic;
 
-        var guo = new GraphUpdateObject(capsuleCollider.bounds);
-        guo.modifyWalkability = true;
-        guo.setWalkability = true;
-        AstarPath.active.UpdateGraphs(guo);
-    }
+		var guo = new GraphUpdateObject(capsuleCollider.bounds);
+		guo.modifyWalkability = true;
+		guo.setWalkability = true;
+		AstarPath.active.UpdateGraphs(guo);
+	}
 
-    private void StopEnemy()
+    private void cursedEnemy()
     {
-        isStopped = true;
+        isSwitched = true;
         mainSprite.SetActive(false);
         alternateSprite.SetActive(true);
-        aipath.canMove = false;
-        myRigidbody.gravityScale = 0;
-        myRigidbody.velocity = new Vector2(0, 0);
-        myRigidbody.bodyType = RigidbodyType2D.Static;
 
-        var guo = new GraphUpdateObject(capsuleCollider.bounds);
-        guo.modifyWalkability = true;
-        guo.setWalkability = false;
-        AstarPath.active.UpdateGraphs(guo);
-    }
+		var guo = new GraphUpdateObject(capsuleCollider.bounds);
+		guo.modifyWalkability = true;
+		guo.setWalkability = true;
+		AstarPath.active.UpdateGraphs(guo);
+	}
 
     public void reduceHealth(float damage) {
 		health -= damage;
@@ -130,7 +118,7 @@ public class Enemy : MonoBehaviour
 			Destroy(gameObject);
 			SoundManager.instance.PlayOneShot(deathClip);
 			GameController.instance.EnemiesKilled++;
-			GameController.instance.AddEnemyType(maskTypeToActivate);
+			//GameController.instance.AddEnemyType(maskTypeToActivate);
 
 			////Drop Experience - MT
 			//GameObject drop = Instantiate(expDrop, transform.position, transform.rotation) as GameObject;
@@ -147,7 +135,7 @@ public class Enemy : MonoBehaviour
 
     private bool TryDamagePlayer()
     {
-		if (damageTimer > 0 || isStopped)
+		if (damageTimer > 0 )
         {
 			return false;
 		}
@@ -169,10 +157,7 @@ public class Enemy : MonoBehaviour
         if (collision.CompareTag("Skill"))
         {
             SkillConfig SkillConfig = collision.GetComponentInParent<SkillConfig>();
-            if (SkillConfig.MaskType == maskTypeToActivate)
-            {
-                reduceHealth(SkillConfig.GetDamage());
-            }
+            reduceHealth(SkillConfig.GetDamage());
         }
         if (collision.gameObject.CompareTag("Player"))
         {
@@ -183,17 +168,19 @@ public class Enemy : MonoBehaviour
 	private void OnParticleCollision(GameObject particle)
 	{
 		SkillConfig particleParent = particle.GetComponentInParent<SkillConfig>();
-		if (particleParent.MaskType == maskTypeToActivate) {
-			reduceHealth(particleParent.GetDamage());
-		}
+		reduceHealth(particleParent.GetDamage());		
 	}
 
 	private void FlipDirection()
 	{
 		if (aipath.desiredVelocity.x >= 0.01f) {
 			transform.localScale = new Vector3(1f, 1f, 0);
+<<<<<<< HEAD
 			DamageDoneTMP.localScale = new Vector3(-1f, 1f, 0);
 		}
+=======
+        }
+>>>>>>> master
 		else if(aipath.desiredVelocity.x <= -0.01f){
 			transform.localScale = new Vector3(-1f, 1f, 0);
 			DamageDoneTMP.localScale = new Vector3(1f, 1f, 0);

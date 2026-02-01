@@ -12,4 +12,9 @@ public class ExpandingSkill : SkillConfig
     public float StartRadius => startRadius;
     public float MaxRadius => maxRadius;
     public float ExpandSpeed => expandSpeed;
+
+    private void OnValidate()
+    {
+        SetAttackType(AttackType.ExpandingRadius);
+    }
 }

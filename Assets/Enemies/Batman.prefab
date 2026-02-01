@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 88918466074082954}
   m_Layer: 9
   m_Name: Altsprite
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -99,7 +99,7 @@ GameObject:
   - component: {fileID: 88918467030005636}
   m_Layer: 9
   m_Name: Batman
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -169,7 +169,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f60985474a00ea94baf1c777874977aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maskTypeToActivate: 0
   deathClip: {fileID: 0}
   health: 1
   damage: 0
@@ -276,7 +275,7 @@ GameObject:
   - component: {fileID: 3601210203252358996}
   m_Layer: 9
   m_Name: Bat
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

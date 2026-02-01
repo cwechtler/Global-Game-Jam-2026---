@@ -38,11 +38,11 @@ public class Spawner : MonoBehaviour
 			{
                 GameObject prefabToSpawn = enemyPrefabs[UnityEngine.Random.Range(0, enemyPrefabs.Length)];
                 Enemy enemyComponent = prefabToSpawn.GetComponent<Enemy>();
-				if (enemyComponent != null && enemyComponent.MaskTypeToActivate == playerController.ActiveMaskType)
-				{
+				//if (enemyComponent != null && enemyComponent.MaskTypeToActivate == playerController.IsMaskOn)
+				//{
                     GameObject enemy = Instantiate(prefabToSpawn, transform.position, Quaternion.identity) as GameObject;
 					enemy.transform.SetParent(this.transform);
-				}
+				//}
 			}
 			yield return new WaitForSeconds(UnityEngine.Random.Range(0, maxWaitToSpawn));
 		}

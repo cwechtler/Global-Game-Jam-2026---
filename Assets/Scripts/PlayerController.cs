@@ -113,12 +113,16 @@ public class PlayerController : MonoBehaviour
 
     public void PickedupMask() { 
         isMaskOn = true;
-        Debug.Log("pickup" + isMaskOn);
+        SoundManager.instance.PlayMusicForScene(2);
+        AstarPath.active.Scan();
+
     }
+
     public void RemoveMask()
     {
         isMaskOn = false;
-        Debug.Log("remove" + isMaskOn);
+        SoundManager.instance.PlayMusicForScene(1);
+        AstarPath.active.Scan();
     }
 
     public void ReduceHealth(int damage)

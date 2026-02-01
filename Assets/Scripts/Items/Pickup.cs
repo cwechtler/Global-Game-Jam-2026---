@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Pickup : MonoBehaviour
 {
-	[SerializeField] private GameObject inventoryPrefab;
+	//[SerializeField] private GameObject inventoryPrefab;
 
 	private bool pickedUp;
 
@@ -12,7 +12,7 @@ public class Pickup : MonoBehaviour
 	{
 		if (collision.CompareTag("Player") && !pickedUp) {
 			pickedUp = true;
-			collision.GetComponent<PlayerController>().AddToInventory(inventoryPrefab);  // change to add health
+			//collision.GetComponent<PlayerController>().AddToInventory(inventoryPrefab);// Drop down to add to health or money
 			GameObject.Destroy(this.gameObject);
 		}
 	}

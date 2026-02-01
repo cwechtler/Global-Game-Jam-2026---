@@ -169,10 +169,10 @@ public class SoundManager : MonoBehaviour {
 		SFXAudioSource.PlayOneShot(deathClip);
 	}
 
-	public void PlayOneShot(AudioClip clip) 
+	public void PlayOneShot(AudioClip clip, float volume = 1f ) 
 	{ 
 		SFXAudioSource.pitch = 1f;
-		SFXAudioSource.PlayOneShot(clip);
+		SFXAudioSource.PlayOneShot(clip, volume);
     }
 
 	public void ChangeMasterVolume(float volume) {

@@ -44,11 +44,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillImage: {fileID: 21300000, guid: 97e3590e0415dd544be4f2c7f4fac4b9, type: 3}
-  damage: 100
+  damage: 5
   firingRate: 1
   coolDownTime: 1
   fireOnce: 0
-  attackType: 5
+  attackType: 4
   projectileVFX: {fileID: 5957638166330556472, guid: a80934c124e68d74a9aa9b94388cbf8e, type: 3}
   range: 10
   projectileSpeed: 10

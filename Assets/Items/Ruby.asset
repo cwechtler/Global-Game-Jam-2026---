@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77489a0de246bbb4f90ab1e4c14f8bca, type: 3}
   m_Name: Ruby
   m_EditorClassIdentifier: 
-  gemName: 
-  sprite: {fileID: 0}
-  amount: 0
-  rarity: 0
+  gemName: Ruby
+  sprite: {fileID: 21300000, guid: 4cee2a477842c874886aa92990e03c9d, type: 3}
+  amount: 85
+  rarity: 1

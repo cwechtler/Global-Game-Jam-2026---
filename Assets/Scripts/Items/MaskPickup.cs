@@ -11,7 +11,7 @@ public class MaskPickup : MonoBehaviour
     private MaskManager manager;
 
     private bool showingMaskOn;
-    private bool pickedUp = false;
+    private bool hasTriggered = false;
 
     private void Awake()
     {
@@ -53,6 +53,11 @@ public class MaskPickup : MonoBehaviour
     {
         if (!other.CompareTag("Player"))
             return;
+
+        if (hasTriggered)
+            return;
+
+        hasTriggered = true;
 
         if (player.IsMaskOn)
         {

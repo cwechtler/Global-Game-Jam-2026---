@@ -15,6 +15,8 @@ public class GameController : MonoBehaviour
 	public GameObject playerGO { get; private set; }
 	public bool isPaused { get; private set; }
 	public float timeDeltaTime { get; private set; }
+
+	public int Experience { get; set; }
 	public int EnemiesKilled { get; set; }
 	public int ActiveSkillIndex { get; set; }
 	public string PlayerName { get; set; }

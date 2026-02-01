@@ -5,13 +5,19 @@ using UnityEngine;
 public class EnemyGemDrop : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private Enemy enemy;
     [SerializeField] private GameObject gemPrefab;
 
     [Header("Gem Table")]
     [SerializeField] private GemData[] gems;
 
+
+    private Enemy enemy;
     private bool dropped = false;
+
+    private void Awake()
+    {
+        enemy = GetComponent<Enemy>();
+    }
 
     private void OnEnable()
     {
@@ -59,13 +65,4 @@ public class EnemyGemDrop : MonoBehaviour
 
         return gems[0]; // fallback
     }
-}
-
-[System.Serializable]
-public class GemData
-{
-    public string gemName;
-    public Sprite sprite;
-    public int amount;
-    public float rarity; // weight
 }

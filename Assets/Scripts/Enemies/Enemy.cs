@@ -19,7 +19,7 @@ public class Enemy : MonoBehaviour
 	[SerializeField] private int experiencePointValue = 10;
 	[SerializeField] private GameObject mainSprite;
 	[SerializeField] private GameObject alternateSprite;
-	[SerializeField] private Transform DamageDoneTMP;
+	//[SerializeField] private Transform DamageDoneTMP;
 
 	public float Health { get => health;}
 	public float Damage { get => damage;}
@@ -110,30 +110,15 @@ public class Enemy : MonoBehaviour
 		health -= damage;
 		if (health <= 0 && !isDead) {
 			isDead = true;
-			Die();
-			//Destroy(gameObject);
-			//SoundManager.instance.PlayOneShot(deathClip);
-			//GameController.instance.EnemiesKilled++;
-			//GameController.instance.AddEnemyType(maskTypeToActivate);
+		
+            OnDeath?.Invoke();
 
-			////Drop Experience - MT
-			//GameObject drop = Instantiate(expDrop, transform.position, transform.rotation) as GameObject;
-			//drop.GetComponent<Experience>().ExperiencePointsWorth = experiencePointValue;
-			//GameObject DropContainer = GameObject.FindGameObjectWithTag("DropContainer");
-			//drop.transform.SetParent(DropContainer.transform);
+            Destroy(gameObject);
+			SoundManager.instance.PlayOneShot(deathClip);
+            GameController.instance.Experience++;
+            GameController.instance.EnemiesKilled++;
 		}
 	}
-    private void Die()
-    {
-        if (isDead) return;
-        isDead = true;
-
-        OnDeath?.Invoke(); 
-
-        Destroy(gameObject);
-        SoundManager.instance.PlayOneShot(deathClip);
-        GameController.instance.EnemiesKilled++;
-    }
 
     private void DamagePlayer() {
 		damageTimer = 1;
@@ -182,22 +167,22 @@ public class Enemy : MonoBehaviour
 	{
 		if (aipath.desiredVelocity.x >= 0.01f) {
 			transform.localScale = new Vector3(1f, 1f, 0);
-			DamageDoneTMP.localScale = new Vector3(-1f, 1f, 0);
+			//DamageDoneTMP.localScale = new Vector3(-1f, 1f, 0);
 		}
 		else if(aipath.desiredVelocity.x <= -0.01f){
 			transform.localScale = new Vector3(-1f, 1f, 0);
-			DamageDoneTMP.localScale = new Vector3(1f, 1f, 0);
+			//DamageDoneTMP.localScale = new Vector3(1f, 1f, 0);
 		}
 	}
 	private void FlipDirectionReversed()
 	{
 		if (aipath.desiredVelocity.x >= 0.01f) {
 			transform.localScale = new Vector3(-1f, 1f, 0);
-			DamageDoneTMP.localScale = new Vector3(1f, 1f, 0);
+			//DamageDoneTMP.localScale = new Vector3(1f, 1f, 0);
 		}
 		else if (aipath.desiredVelocity.x <= -0.01f) {
 			transform.localScale = new Vector3(1f, 1f, 0);
-			DamageDoneTMP.localScale = new Vector3(-1f, 1f, 0);
+			//DamageDoneTMP.localScale = new Vector3(-1f, 1f, 0);
 		}
 	}
 }

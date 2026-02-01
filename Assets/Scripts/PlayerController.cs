@@ -106,10 +106,10 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	public void AddToInventory(GameObject inventoryPrefab) {
-		inventoryItems.Add(inventoryPrefab);
-		canvasController.AddInventoryItem(inventoryPrefab);
-	}
+	//public void AddToInventory(GameObject inventoryPrefab) {
+	//	inventoryItems.Add(inventoryPrefab);
+	//	//canvasController.AddInventoryItem(inventoryPrefab);
+	//}
 
     public void PickedupMask() { 
         isMaskOn = true;

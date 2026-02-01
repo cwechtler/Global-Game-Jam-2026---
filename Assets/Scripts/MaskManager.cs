@@ -29,8 +29,6 @@ public class MaskManager : MonoBehaviour
 
         cooldownTimer -= Time.deltaTime;
 
-        Debug.Log(cooldownTimer);
-
         if (cooldownTimer <= 0f)
         {
             cooldownActive = false;

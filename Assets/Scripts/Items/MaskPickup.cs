@@ -54,20 +54,18 @@ public class MaskPickup : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-
-        if (player.IsMaskOn == false && !pickedUp)
+        if (player.IsMaskOn)
         {
-            
+            player.RemoveMask();
+            manager.SwitchMap();
+            Debug.Log("Removed mask");
+        }
+        else
+        {
             player.PickedupMask();
             manager.SwitchMap();
             manager.StartCooldown();
-        }
-        else if (player.IsMaskOn == true && pickedUp)
-        {
-            
-            player.RemoveMask();
-            manager.SwitchMap();
-            Debug.Log("NOT REACHING HERE");
+            Debug.Log("Picked up mask");
         }
 
         manager.ClearMaskPickup();

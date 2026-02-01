@@ -3,12 +3,14 @@ using UnityEngine.UI;
 
 public class PlayerHealthBar : MonoBehaviour
 {
-    [SerializeField] private PlayerController playerController;
     [SerializeField] private Slider playerHealthBar;
+
+    private PlayerController playerController;
 
     // Start is called before the first frame update
     void Start()
     {
+        playerController = GetComponent<PlayerController>();
         //playerHealthBar.value = playerController.Health;
     }
 

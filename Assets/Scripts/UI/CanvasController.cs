@@ -14,9 +14,12 @@ public class CanvasController : MonoBehaviour
 	[Space]
 	//[SerializeField] private Slider playerHealthBar;
 	[SerializeField] private TextMeshProUGUI ScoreText;
+	[Space]
+	[SerializeField] private GameObject[] skillblocks;
 	[SerializeField] private TextMeshProUGUI[] skillTexts;
 	[SerializeField] private Slider[] skillCoolDowns;
 	[SerializeField] private Image[] skillCooldownFill;
+	[SerializeField] private Slider experiance;
 
 	private Button button;
 	private TextMeshProUGUI buttonText;
@@ -25,7 +28,7 @@ public class CanvasController : MonoBehaviour
 	private void Start()
 	{
 		//playerHealthBar.value = 100;
-		UpdateTextColor();
+		//UpdateTextColor();
 		foreach (Transform child in inventory.transform) {
 			if (child.name == "Key") {
 				print("Has Key");
@@ -35,29 +38,42 @@ public class CanvasController : MonoBehaviour
 
 	private void Update()
 	{
-		ScoreText.text = GameController.instance.EnemiesKilled.ToString();
+		ScoreText.text = GameController.instance.Gems.ToString();
 		if (GameController.instance.isPaused) {
 			pausePanel.SetActive(true);
 		}
 		else {
 			pausePanel.SetActive(false);
 		}
+
+		experiance.value = GameController.instance.Experience;
 	}
 
-	//public void AddInventoryItem(GameObject inventoryPrefab) {
-	//	Instantiate(inventoryPrefab, inventory.transform);
-	//}
+    public void EnableSkillSlot(int index)
+    {
 
-	//public void RemoveInventoryItem(string itemKey)
-	//{
-	//	foreach (Transform child in inventory.transform) {
-	//		if (child.name == itemKey) {
-	//			GameObject.Destroy(child.gameObject);
-	//		}
-	//	}
-	//}
+		Debug.Log("hit this");
+        if (index < 0 || index >= skillblocks.Length)
+            return;
 
-	public void UpdateTextColor()
+        skillblocks[index].SetActive(true);
+    }
+
+
+    //public void AddInventoryItem(GameObject inventoryPrefab) {
+    //	Instantiate(inventoryPrefab, inventory.transform);
+    //}
+
+    //public void RemoveInventoryItem(string itemKey)
+    //{
+    //	foreach (Transform child in inventory.transform) {
+    //		if (child.name == itemKey) {
+    //			GameObject.Destroy(child.gameObject);
+    //		}
+    //	}
+    //}
+
+    public void UpdateTextColor()
 	{		
 		for (int i = 0; i < skillTexts.Length; i++) {
 			if (i == GameController.instance.ActiveSkillIndex) {

@@ -145,6 +145,9 @@ public class LevelManager : MonoBehaviour {
 		if (restart) {
 			GameController.instance.resetGame();
 		}
+		if (name != MainMenuString) {
+			SoundManager.instance.StopMonologue();
+		}
 		StartCoroutine(LoadLevel(name, .9f));
 	}
 

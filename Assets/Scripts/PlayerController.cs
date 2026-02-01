@@ -98,6 +98,8 @@ public class PlayerController : MonoBehaviour
             // optionally unlock the first skill by default
             if (i == 0)
                 unlockedSkills[i] = true;
+
+            canvasController.EnableSkillSlot(0);
         }
     }
 
@@ -106,7 +108,7 @@ public class PlayerController : MonoBehaviour
 		if (!isDead && !GameController.instance.isPaused) {
 			Move();
 
-			SelectSkill();
+			//SelectSkill();
 			Fire();
 		}
 		if (Input.GetButtonDown("Enter"))
@@ -114,6 +116,7 @@ public class PlayerController : MonoBehaviour
 			LevelManager.instance.LoadLevel(LevelManager.MainMenuString);
 		}
 	}
+
     public void CheckSkillUnlocks(int currentXP)
     {
         for (int i = 0; i < skills.Length; i++)
@@ -121,19 +124,21 @@ public class PlayerController : MonoBehaviour
             if (!unlockedSkills[i] && currentXP >= xpRequiredForSkill[i])
             {
                 unlockedSkills[i] = true;
-                //canvasController.EnableSkillSlot(i); // optional UI
+                canvasController.EnableSkillSlot(i); // optional UI
+                //canvasController.SetCoolDownTime(i, coolDownTimes[i]);
+                //canvasController.SetSkillImages(i, skill.SkillImage);
             }
         }
     }
 
-    public void UnlockSkill(int index)
-    {
-        if (index < 0 || index >= skills.Length)
-            return;
+    //public void UnlockSkill(int index)
+    //{
+    //    if (index < 0 || index >= skills.Length)
+    //        return;
 
-        unlockedSkills[index] = true;
-        //canvasController.EnableSkillSlot(index); // optional UI hook
-    }
+    //    unlockedSkills[index] = true;
+    //    //canvasController.EnableSkillSlot(index); // optional UI hook
+    //}
 
     public void PickedupMask() { 
         isMaskOn = true;
@@ -211,39 +216,39 @@ public class PlayerController : MonoBehaviour
 		SkillConfig activeSkillSkillConfig = activeSkill.GetComponent<SkillConfig>();
         //isMaskOn = activeSkillSkillConfig.AttackType;
         firingRate = activeSkillSkillConfig.FireRate;
-		canvasController.UpdateTextColor();
+		//canvasController.UpdateTextColor();
 	}
 
-	private void SelectSkill()
-	{
-		if (Input.GetAxis("Mouse ScrollWheel") > 0f || Input.GetButtonDown("Space"))
-		{
-			if (activeSkillIndex == skills.Length - 1) activeSkillIndex = 0;
-			else activeSkillIndex++;
-			SetActiveSkill(activeSkillIndex);
-		}
-		if (Input.GetAxis("Mouse ScrollWheel") < 0f)
-		{
-			if (activeSkillIndex == 0) activeSkillIndex = skills.Length - 1;
-			else activeSkillIndex--;
-			SetActiveSkill(activeSkillIndex);
-		}
+	//private void SelectSkill()
+	//{
+	//	if (Input.GetAxis("Mouse ScrollWheel") > 0f || Input.GetButtonDown("Space"))
+	//	{
+	//		if (activeSkillIndex == skills.Length - 1) activeSkillIndex = 0;
+	//		else activeSkillIndex++;
+	//		SetActiveSkill(activeSkillIndex);
+	//	}
+	//	if (Input.GetAxis("Mouse ScrollWheel") < 0f)
+	//	{
+	//		if (activeSkillIndex == 0) activeSkillIndex = skills.Length - 1;
+	//		else activeSkillIndex--;
+	//		SetActiveSkill(activeSkillIndex);
+	//	}
 
-		if (Input.GetButtonDown("Fire1")) {
-			SetActiveSkill(0);
-        }
-		else if (Input.GetButtonDown("Fire2")) {
-			SetActiveSkill(1);
-        }
-		else if (Input.GetButton("Fire3")) {
-            SetActiveSkill(2);
-            //animator.SetTrigger("Attack");
-        }
-		else if (Input.GetButtonDown("Jump")) {
-			//ReduceHealth(0);
-            SetActiveSkill(3);
-        }
-	}
+	//	if (Input.GetButtonDown("Fire1")) {
+	//		SetActiveSkill(0);
+ //       }
+	//	else if (Input.GetButtonDown("Fire2")) {
+	//		SetActiveSkill(1);
+ //       }
+	//	else if (Input.GetButton("Fire3")) {
+ //           SetActiveSkill(2);
+ //           //animator.SetTrigger("Attack");
+ //       }
+	//	else if (Input.GetButtonDown("Jump")) {
+	//		//ReduceHealth(0);
+ //           SetActiveSkill(3);
+ //       }
+	//}
 
 
     private void UpdateSkillSpawner(Vector2 direction)

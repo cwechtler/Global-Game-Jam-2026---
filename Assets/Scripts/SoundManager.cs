@@ -115,9 +115,14 @@ public class SoundManager : MonoBehaviour {
 		}
 	}
 
-	public void PlayMonologue() {
+	public void PlayMonologue()
+	{
 		SFXAudioSource.PlayOneShot(Monologue, 1f);
 	}
+    public void StopMonologue()
+    {
+		SFXAudioSource.Stop();
+    }
 
     public void PlayMusicForScene(int index)
 	{

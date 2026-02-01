@@ -522,7 +522,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 8.6}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -207.79993, y: 325}
+  m_AnchoredPosition: {x: -207.79993, y: 347}
   m_SizeDelta: {x: 1400, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &355699200
@@ -546,7 +546,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "<size=72>Beloved,<size=36>\nI fear I may never see you again. I'm just
-    not strong enough to make it through to the end.\n\t\t\t\t\tYou're smoopie pie,\n\t\t\t\t\t\t<size=72>M,<size=36>"
+    not strong enough to make it through to the end.\n\t\t\t\t\tYou're love,\n\t\t\t\t\t\t<size=72>Theron<size=36>"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e2a28aaa3d0d0d44f829ce7c3eb9bf17, type: 2}
   m_sharedMaterial: {fileID: -3767639317898129937, guid: e2a28aaa3d0d0d44f829ce7c3eb9bf17, type: 2}

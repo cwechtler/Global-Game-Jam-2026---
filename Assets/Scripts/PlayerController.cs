@@ -70,6 +70,12 @@ public class PlayerController : MonoBehaviour
     public int experiencePoints;
     private bool[] unlockedSkills;
 
+    private void Awake()
+    {
+        GameController.instance.player = this;
+    }
+
+
     void Start()
 	{
 		myRigidbody2D = GetComponent<Rigidbody2D>();

@@ -6,6 +6,7 @@ using System.Net;
 using System.Numerics;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
@@ -30,7 +31,7 @@ public class GameController : MonoBehaviour
 	private GameObject fadePanel;
 	private bool instructionsToggle = false;
 	private Animator animator;
-    private PlayerController player;
+    public PlayerController player { get; set; }
 
     //private string apiURL = "http://10.10.10.10:8080/api/{Game Name}";
     //private string apiURL = "/api/{Game Name}";	
@@ -61,12 +62,11 @@ public class GameController : MonoBehaviour
 			if (PlayerPrefs.HasKey("instructions_toggle"))
 			{
 				instructionsToggle = PlayerPrefsManager.GetInstructionsToggle();
-			}
-            player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+			}         
         }
     }
 
-	private void Update()
+    private void Update()
 	{
 		if (Input.GetButtonDown("Pause")) {
 			if (!isPaused) {

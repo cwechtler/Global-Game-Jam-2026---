@@ -200,8 +200,8 @@ MonoBehaviour:
   damage: 10
   aipathMaxSpeed: 4
   experiencePointValue: 15
-  mainSprite: {fileID: 7457772591386050083}
-  alternateSprite: {fileID: 0}
+  mainSprite: {fileID: 1797607449637633845}
+  alternateSprite: {fileID: 7457772591386050083}
 --- !u!114 &7457772590710614741
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -7,7 +7,6 @@ using UnityEngine;
 using TMPro;
 
 
-
 public class Enemy : MonoBehaviour
 {
 	[SerializeField] private AudioClip deathClip;
@@ -25,10 +24,6 @@ public class Enemy : MonoBehaviour
 	public float Health { get => health;}
 	public float Damage { get => damage;}
 	
-	
-	//public TextMeshProUGUI EnemyDamageDoneTMP; 
-	//public TMP_Text DamageDoneText;
-	public GameObject EnemyDamageDoneObject; 
 
     // health changes based on state
 	

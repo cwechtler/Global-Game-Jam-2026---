@@ -150,11 +150,12 @@ MonoBehaviour:
   projectileSpeed: 15
   spawnOffset: 2
   skills:
-  - {fileID: 1152912962041569513, guid: ee67b55ccfc8a5545aacce7cebe391a4, type: 3}
-  - {fileID: 5080593527512301591, guid: 940d4e27d7dac224da347a558f6c2b04, type: 3}
-  - {fileID: 2001101431383174984, guid: 4c2c1f6e614246940806a40d1f46718e, type: 3}
-  - {fileID: 5745014613111111121, guid: ca3f6509cb330cf4a8bc8e28a23fd36e, type: 3}
   - {fileID: 4298591392917026362, guid: b0e0fe1c93f96854997b81e00564f7a8, type: 3}
+  - {fileID: 5745014613111111121, guid: ca3f6509cb330cf4a8bc8e28a23fd36e, type: 3}
+  - {fileID: 1152912962041569513, guid: ee67b55ccfc8a5545aacce7cebe391a4, type: 3}
+  - {fileID: 2001101431383174984, guid: 4c2c1f6e614246940806a40d1f46718e, type: 3}
+  - {fileID: 5080593527512301591, guid: 940d4e27d7dac224da347a558f6c2b04, type: 3}
+  xpRequiredForSkill: 0000000019000000320000006400000096000000
   skillSpawner: {fileID: 1147470130251960737}
   skillSpawnPoint: {fileID: 1147470131197701088}
   activeSkillContainer: {fileID: 1147470131743012527}

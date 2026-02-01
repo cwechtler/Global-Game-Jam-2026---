@@ -4,6 +4,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using TMPro;
+
+
 
 public class Enemy : MonoBehaviour
 {
@@ -17,6 +20,15 @@ public class Enemy : MonoBehaviour
 	[SerializeField] private int experiencePointValue = 10;
 	[SerializeField] private GameObject mainSprite;
 	[SerializeField] private GameObject alternateSprite;
+	[SerializeField] private Transform DamageDoneTMP;
+
+	public float Health { get => health;}
+	public float Damage { get => damage;}
+	
+	
+	//public TextMeshProUGUI EnemyDamageDoneTMP; 
+	//public TMP_Text DamageDoneText;
+	public GameObject EnemyDamageDoneObject; 
 
     // health changes based on state
 	
@@ -72,7 +84,7 @@ public class Enemy : MonoBehaviour
 			destinationSetter.target = player.transform;
 			aipath.maxSpeed = aipathMaxSpeed;
 			gameObject.layer = 9;
-		}
+		}		 
 	}
 
     private void overworldEnemy()
@@ -163,18 +175,22 @@ public class Enemy : MonoBehaviour
 	{
 		if (aipath.desiredVelocity.x >= 0.01f) {
 			transform.localScale = new Vector3(1f, 1f, 0);
-        }
+			DamageDoneTMP.localScale = new Vector3(-1f, 1f, 0);
+		}
 		else if(aipath.desiredVelocity.x <= -0.01f){
 			transform.localScale = new Vector3(-1f, 1f, 0);
+			DamageDoneTMP.localScale = new Vector3(1f, 1f, 0);
 		}
 	}
 	private void FlipDirectionReversed()
 	{
 		if (aipath.desiredVelocity.x >= 0.01f) {
 			transform.localScale = new Vector3(-1f, 1f, 0);
+			DamageDoneTMP.localScale = new Vector3(1f, 1f, 0);
 		}
 		else if (aipath.desiredVelocity.x <= -0.01f) {
 			transform.localScale = new Vector3(1f, 1f, 0);
+			DamageDoneTMP.localScale = new Vector3(-1f, 1f, 0);
 		}
 	}
 }

@@ -114,7 +114,7 @@ public class Enemy : MonoBehaviour
 
             Destroy(gameObject);
 			SoundManager.instance.PlayOneShot(deathClip);
-            GameController.instance.Experience++;
+			GameController.instance.AddXP(experiencePointValue);
             GameController.instance.EnemiesKilled++;
 		}
 	}

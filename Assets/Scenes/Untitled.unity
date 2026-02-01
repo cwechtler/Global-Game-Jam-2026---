@@ -365,6 +365,7 @@ MonoBehaviour:
   experiencePointValue: 10
   mainSprite: {fileID: 864476080}
   alternateSprite: {fileID: 214261631}
+  DamageDoneTMP: {fileID: 0}
 --- !u!50 &43316945
 Rigidbody2D:
   serializedVersion: 4
@@ -1302,6 +1303,7 @@ MonoBehaviour:
   experiencePointValue: 10
   mainSprite: {fileID: 1155903559}
   alternateSprite: {fileID: 327692217}
+  DamageDoneTMP: {fileID: 0}
 --- !u!50 &319984032
 Rigidbody2D:
   serializedVersion: 4
@@ -57833,6 +57835,7 @@ MonoBehaviour:
   experiencePointValue: 10
   mainSprite: {fileID: 2063245173}
   alternateSprite: {fileID: 155774654}
+  DamageDoneTMP: {fileID: 0}
 --- !u!50 &442843839
 Rigidbody2D:
   serializedVersion: 4
@@ -135940,7 +135943,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85fb69f128d26c14bbe8b07f1fe08e20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerController: {fileID: 1189285515}
   playerHealthBar: {fileID: 2139934645}
 --- !u!1 &1251794687
 GameObject:
@@ -141212,7 +141214,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1147470130644135684, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1147470130644135686, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
       propertyPath: m_RootOrder
@@ -141278,8 +141280,19 @@ PrefabInstance:
       propertyPath: skills.Array.data[2]
       value: 
       objectReference: {fileID: 4298591392917026362, guid: b0e0fe1c93f96854997b81e00564f7a8, type: 3}
-    m_RemovedComponents:
-    - {fileID: 1147470130644135684, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
+    - target: {fileID: 3592900492114977323, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
+      propertyPath: m_RootOrder
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 3592900493027298507, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3592900493027298507, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
 --- !u!1001 &1511877301
 PrefabInstance:
@@ -141480,6 +141493,7 @@ MonoBehaviour:
   experiencePointValue: 10
   mainSprite: {fileID: 263225201}
   alternateSprite: {fileID: 1772298097}
+  DamageDoneTMP: {fileID: 0}
 --- !u!50 &1529224074
 Rigidbody2D:
   serializedVersion: 4
@@ -143720,6 +143734,7 @@ MonoBehaviour:
   experiencePointValue: 10
   mainSprite: {fileID: 1176651289}
   alternateSprite: {fileID: 1765204397}
+  DamageDoneTMP: {fileID: 0}
 --- !u!50 &1799842702
 Rigidbody2D:
   serializedVersion: 4
@@ -143904,6 +143919,7 @@ MonoBehaviour:
   experiencePointValue: 10
   mainSprite: {fileID: 86352805}
   alternateSprite: {fileID: 1731562571}
+  DamageDoneTMP: {fileID: 0}
 --- !u!50 &1886069611
 Rigidbody2D:
   serializedVersion: 4

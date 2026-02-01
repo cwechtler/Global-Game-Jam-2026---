@@ -51,3 +51,5 @@ MonoBehaviour:
   attackType: 3
   radialVFX: {fileID: 4269602808709832382, guid: 16db8bad1ce23fd48bd6d0a5510ec9ef, type: 3}
   radius: 3
+  skillDuration: 2
+  damageInterval: 0.2

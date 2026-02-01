@@ -27,7 +27,6 @@ public class PlayerController : MonoBehaviour
     public enum MoveDir { None, North, South, East, West }
     public MoveDir currentDirection = MoveDir.None;
 
-
     public int ExperiencePoints { get => experiencePoints; set => experiencePoints = value; }
 	public List<GameObject> InventoryItems { get => inventoryItems; set => inventoryItems = value; }
 	public float FireX { get => fireX; }
@@ -114,10 +113,12 @@ public class PlayerController : MonoBehaviour
 
     public void PickedupMask() { 
         isMaskOn = true;
+        Debug.Log("pickup" + isMaskOn);
     }
     public void RemoveMask()
     {
         isMaskOn = false;
+        Debug.Log("remove" + isMaskOn);
     }
 
     public void ReduceHealth(int damage)
@@ -127,7 +128,6 @@ public class PlayerController : MonoBehaviour
             SoundManager.instance.PlayHurtClip();
 
 			Health -= damage;
-			canvasController.ReduceHealthBar(Health);
 
 			if (Health <= 0) {
 				StartCoroutine(PlayerDeath());
@@ -155,14 +155,12 @@ public class PlayerController : MonoBehaviour
         {
             FacingDirection = new Vector2(inputX, inputY).normalized;
         }
-        //Debug.Log("Facing Direction: " + FacingDirection);
 
         myRigidbody2D.velocity = new Vector2(speed.x * inputX, speed.y * inputY);
 		moveHorizontaly = Mathf.Abs(myRigidbody2D.velocity.x) > Mathf.Epsilon;
 		moveVertically = Mathf.Abs(myRigidbody2D.velocity.y) > Mathf.Epsilon;
 
 		SetAnimations(inputX, inputY);
-		//FlipDirection();
 	}
 
 	private IEnumerator PlayerDeath()
@@ -210,12 +208,12 @@ public class PlayerController : MonoBehaviour
 			SetActiveSkill(1);
         }
 		else if (Input.GetButton("Fire3")) {
-            //SetActiveSkill(2);
-            animator.SetTrigger("Attack");
+            SetActiveSkill(2);
+            //animator.SetTrigger("Attack");
         }
 		else if (Input.GetButtonDown("Jump")) {
-			ReduceHealth(0);
-            //SetActiveSkill(3);
+			//ReduceHealth(0);
+            SetActiveSkill(3);
         }
 	}
 
@@ -227,11 +225,9 @@ public class PlayerController : MonoBehaviour
 
         direction = direction.normalized;
 
-        // Rotate to face direction
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         skillSpawner.rotation = Quaternion.Euler(0, 0, angle);
 
-        // Move it in front of the player
         skillSpawner.position = (Vector2)transform.position + direction * spawnOffset;
     }
 
@@ -241,12 +237,8 @@ public class PlayerController : MonoBehaviour
         if (direction == Vector2.zero)
             return;
 
-        // Rotate skill spawner to face movement direction
         UpdateSkillSpawner(direction);
-        //skillSpawner.eulerAngles =
-        //    new Vector3(0, 0, Mathf.Atan2(-direction.y, -direction.x) * Mathf.Rad2Deg);
 
-        // Loop through ALL skills the player has
         for (int index = 0; index < skills.Length; index++)
         {
             TryFireSkill(index, direction);
@@ -276,6 +268,10 @@ public class PlayerController : MonoBehaviour
 
         if (skillConfig is ConeSkill cone)
             enemyInRange = ConeHasEnemy(cone, direction);
+
+        else if (skillConfig is OrbitalConfig orbital)
+            enemyInRange = OrbitalHasEnemy(orbital);
+
         else if (skillConfig is RadialSkill radial)
             enemyInRange = RadialHasEnemy(radial);
 
@@ -300,15 +296,24 @@ public class PlayerController : MonoBehaviour
         else if (skillConfig is ProjectileConfig projectile)
             FireProjectile(projectile, direction);
 
+        else if (skillConfig is OrbitalConfig orbital)
+        {
+            if (orbital.RadialVFX != null)
+            {
+                GameObject vfx = Instantiate(orbital.RadialVFX, transform.position, Quaternion.identity);
+                vfx.transform.SetParent(transform);
+                StartCoroutine(OrbitalOverTime(orbital, vfx));
+            }
+        }
+
         else if (skillConfig is RadialSkill radial)
         {
             if (radial.RadialVFX != null)
             {
-                //Instantiate(radial.RadialVFX, transform.position, Quaternion.identity);
                 GameObject vfx = Instantiate(radial.RadialVFX, transform.position, Quaternion.identity);
                 vfx.transform.SetParent(transform);
-            }
-            FireRadial(radial);
+                StartCoroutine(FireRadialOverTime(radial, vfx));
+            }   
         }
 
         else if (skillConfig is ExpandingSkill expanding)
@@ -368,31 +373,50 @@ public class PlayerController : MonoBehaviour
 
         }
     }
+
     private IEnumerator DelayedHit(Collider2D hit, ConeSkill config)
     {
         yield return new WaitForSeconds(config.HitDelay); // add this to your config
         hit.GetComponentInParent<Enemy>().reduceHealth(config.GetDamage());
     }
 
+    private bool OrbitalHasEnemy(OrbitalConfig config)
+    {
+        return Physics2D.OverlapCircle(transform.position, config.TriggerRadius, enemyLayer);
+    }
+
+    private IEnumerator OrbitalOverTime(OrbitalConfig config, GameObject vfx)
+    {
+        yield return new WaitForSeconds(config.Duration);
+
+        if (vfx != null)
+            Destroy(vfx);
+    }
 
     private bool RadialHasEnemy(RadialSkill config)
     {
         return Physics2D.OverlapCircle(transform.position, config.Radius, enemyLayer);
     }
 
-    private void FireRadial(RadialSkill config)
+    private IEnumerator FireRadialOverTime(RadialSkill config, GameObject vfx)
     {
-        //Debug.Log("Firing Radial Skill");
-        //if (config.RadialVFX != null) 
-        //{
-        //    GameObject vfx = Instantiate(config.RadialVFX, transform.position, Quaternion.identity);
-        //    vfx.transform.SetParent(transform);
-        //}
-        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, config.Radius, enemyLayer);
+        float timer = 0f;
 
-        foreach (var hit in hits)
-            hit.GetComponentInParent<Enemy>().reduceHealth(config.GetDamage());
+        while (timer < config.Duration)
+        {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, config.Radius, enemyLayer);
+
+            foreach (var hit in hits)
+                hit.GetComponentInParent<Enemy>().reduceHealth(config.GetDamage());
+
+            timer += config.TickRate;
+            yield return new WaitForSeconds(config.TickRate);
+        }
+
+        if (vfx != null)
+            Destroy(vfx);
     }
+
 
     private bool ExpandingHasEnemy(ExpandingSkill config)
     {
@@ -424,14 +448,27 @@ public class PlayerController : MonoBehaviour
 
     private void FireProjectile(ProjectileConfig config, Vector2 dir)
     {
+        Quaternion rotation;
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        Quaternion rotation = Quaternion.Euler(0f, 0f, angle);
+        
+        if (angle > 90f || angle < -90f)
+        {
+            rotation = Quaternion.Euler(180f, 0f, -angle);
+        }
+        else
+        {
+            rotation = Quaternion.Euler(0f, 0f, angle);
+        }
+
+
         GameObject proj = Instantiate(config.ProjectileVFX, skillSpawner.position, rotation);
 
         Projectile projectile = proj.GetComponent<Projectile>();
         projectile.AreaEffect = config.AreaEffect;
         projectile.Damage = config.GetDamage();
-        //projectile.ProjectileCollisionSound = config.ProjectileCollisionSound.clip;
+        projectile.HasEndAnimation = config.HasEndAnimation;
+        if(projectile.ProjectileCollisionSound != null)
+            projectile.ProjectileCollisionSound = config.ProjectileCollisionSound.clip;
         proj.GetComponent<Rigidbody2D>().velocity = dir * config.ProjectileSpeed;
     }
 
@@ -502,6 +539,17 @@ public class PlayerController : MonoBehaviour
             // -------------------------
             // RADIAL SKILL GIZMO
             // -------------------------
+            OrbitalConfig orbital = skill.GetComponent<OrbitalConfig>();
+            if (orbital != null)
+            {
+                Gizmos.color = Color.blue;
+                Gizmos.DrawWireSphere(transform.position, orbital.TriggerRadius);
+                continue;
+            }
+
+            // -------------------------
+            // RADIAL SKILL GIZMO
+            // -------------------------
             RadialSkill radial = skill.GetComponent<RadialSkill>();
             if (radial != null)
             {
@@ -520,111 +568,8 @@ public class PlayerController : MonoBehaviour
                 Gizmos.DrawWireSphere(transform.position, expanding.MaxRadius);
                 continue;
             }
-
-
-
-            //ConeSkill cone = skill.GetComponent<ConeSkill>();
-            //if (cone == null)
-            //    continue;
-
-            //float radius = cone.Radius;
-            //float angle = cone.Angle;
-
-            //Vector3 origin = transform.position;
-
-            //// Draw radius circle
-            //Gizmos.color = Color.yellow;
-            //Gizmos.DrawWireSphere(origin, radius);
-
-            //// Draw cone edges
-            //float halfAngle = angle;
-
-            //Vector3 leftDir = Quaternion.Euler(0, 0, halfAngle) * facing;
-            //Vector3 rightDir = Quaternion.Euler(0, 0, -halfAngle) * facing;
-
-            //Gizmos.color = Color.red;
-            //Gizmos.DrawLine(origin, origin + leftDir * radius);
-            //Gizmos.DrawLine(origin, origin + rightDir * radius);
-
-            //// Fill the cone with debug lines (optional but helpful)
-            //Gizmos.color = new Color(1, 0, 0, 0.2f);
-            //for (float a = -halfAngle; a <= halfAngle; a += 5f)
-            //{
-            //    Vector3 dir = Quaternion.Euler(0, 0, a) * facing;
-            //    Gizmos.DrawLine(origin, origin + dir * radius);
-            //}
         }
     }
-
-    //private void Fire() {
-    //	fireY = Input.GetAxis("SpellVertical");
-    //	fireX = Input.GetAxis("SpellHorizontal");
-
-    //	if (Input.touchCount == 2 && Input.touches[0].phase == TouchPhase.Began)
-    //	{
-    //		Debug.Log("Right Click (Two Finger Tap)");
-    //		// Handle right-click behavior here
-    //	}
-
-    //	if (Input.GetMouseButton(1) || (Input.touchCount == 2 && Input.touches[0].phase == TouchPhase.Began)) {
-    //		Vector3 direction = MousePointerDirection();
-
-    //		fireX = Mathf.Clamp(direction.x, -1, 1);
-    //		fireY = Mathf.Clamp(direction.y, -1, 1);
-    //	}
-
-    //	if ((fireX != 0 || fireY != 0)) {
-    //		skillSpawner.eulerAngles = new Vector3(0, 0, Mathf.Atan2(-fireY, -fireX) * 180 / Mathf.PI);
-    //		if (skillWasCast[activeSkillIndex] == false) {
-    //			skillWasCast[activeSkillIndex] = true;
-    //			string skillType = activeSkill.GetComponent<SkillConfig>().MaskType.ToString();
-    //			//foreach (var animator in animator) {
-    //				animator.SetTrigger("Attack");
-    //			//}
-    //			switch (skillType) {
-    //				//case { skill that required casting it }:
-    //				// CastSkill();
-    //				//	break;
-    //				//case { skill that required placing it }:
-    //				//	PlaceSkill();
-    //				//	break;
-    //				default:
-    //					//StartCoroutine(ThrowSkill(fireX, fireY));
-    //					break;
-    //			}
-    //		}
-    //	}
-
-    //	for (int i = 0; i < skills.Length; i++) {
-    //		if (skillWasCast[i]) {
-    //			if (timerTimes[i] < coolDownTimes[i]) {
-    //				timerTimes[i] += Time.deltaTime;
-    //				canvasController.CoolDownTimer(timerTimes[i], coolDownTimes[i], i);
-    //			}
-    //			else if (timerTimes[i] >= coolDownTimes[i]) {
-    //				timerTimes[i] = 0;
-    //				skillWasCast[i] = false;
-    //			}
-    //		}
-    //	}
-    //}
-
-    //   private void CastSkill() {
-    //	GameObject spell = Instantiate(activeSkill, transform.position, Quaternion.identity, activeSkillContainer) as GameObject;
-    //}
-
-    //private void PlaceSkill() {
-    //	GameObject spell = Instantiate(activeSkill, skillSpawnPoint.position, Quaternion.identity) as GameObject;
-    //}
-
-    //private IEnumerator ThrowSkill(float fireX, float fireY)
-    //{
-    //	GameObject SkillConfig = Instantiate(activeSkill, transform.position, Quaternion.identity) as GameObject;
-    //	Rigidbody2D SkillConfigRidgidbody2D = SkillConfig.GetComponent<Rigidbody2D>();
-    //	SkillConfigRidgidbody2D.velocity = new Vector3(fireX, fireY, 0);
-    //	SkillConfigRidgidbody2D.velocity = (Vector3.Normalize(SkillConfigRidgidbody2D.velocity) * projectileSpeed);
-    //	yield return new WaitForSeconds(firingRate);
-    //}
 
     private Vector3 MousePointerDirection()
 	{

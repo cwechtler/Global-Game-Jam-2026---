@@ -163,7 +163,7 @@ public class Enemy : MonoBehaviour
 	{
 		if (aipath.desiredVelocity.x >= 0.01f) {
 			transform.localScale = new Vector3(1f, 1f, 0);
-		}
+        }
 		else if(aipath.desiredVelocity.x <= -0.01f){
 			transform.localScale = new Vector3(-1f, 1f, 0);
 		}

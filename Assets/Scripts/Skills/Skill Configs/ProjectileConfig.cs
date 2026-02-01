@@ -8,6 +8,7 @@ public class ProjectileConfig : SkillConfig
     [SerializeField] private GameObject projectileVFX;
     [SerializeField] private float range = 1f;
     [SerializeField] private float projectileSpeed = 10f;
+    [SerializeField] private bool hasEndAnimation = false;
 
     [Range(.01f, 10f)][SerializeField] private float areaEffect = 6f;
 
@@ -19,6 +20,7 @@ public class ProjectileConfig : SkillConfig
     public float AreaEffect { get => areaEffect; set => areaEffect = value; }
     public AudioSource ProjectileCollisionSound { get => projectileCollisionSound; set => projectileCollisionSound = value; }
     public GameObject ProjectileVFX { get => projectileVFX; set => projectileVFX = value; }
+    public bool HasEndAnimation { get => hasEndAnimation; set => hasEndAnimation = value; }
 
     private void OnValidate()
     {

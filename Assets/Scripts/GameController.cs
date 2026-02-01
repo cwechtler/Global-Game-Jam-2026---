@@ -189,18 +189,20 @@ public class GameController : MonoBehaviour
 		return true;
 	}
 
-	public void AddEnemyType(AttackType maskType) {
-		switch (maskType) {
-            case AttackType.mask1:
-                //mask1++;
-                break;
-            case AttackType.mask2:
-                //mask2++;
-                break;
-            default:
-				break;
-		}
-	}
+	//public void AddEnemyType(AttackType maskType)
+	//{
+	//	switch (maskType)
+	//	{
+	//		case AttackType.mask1:
+	//			//mask1++;
+	//			break;
+	//		case AttackType.mask2:
+	//			//mask2++;
+	//			break;
+	//		default:
+	//			break;
+	//	}
+	//}
 
 	public void resetGame() {
 		EnemiesKilled = 0;

@@ -15,8 +15,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Controls Menu.unity
     guid: ebc98608c16b2034d9f1dfa84b638766
   - enabled: 1
-    path: Assets/Scenes/Craig's Testing Level.unity
-    guid: ad0b0d7752551f54c958683c50fcd227
+    path: Assets/Scenes/Level 1.unity
+    guid: 4f7b47e93a4f037439a9af1e113daf54
   - enabled: 1
     path: Assets/Scenes/Lose Level.unity
     guid: 548ba720bceb7e74c9b59ffcd4fc2878

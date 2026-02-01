@@ -47,6 +47,10 @@ public class LevelManager : MonoBehaviour {
 
 	private void Start(){
 		currentScene = SceneManager.GetActiveScene().name;
+		if (currentScene == MainMenuString)
+		{
+			SoundManager.instance.PlayMonologue();
+		}
 	}
 
 	private void Update(){

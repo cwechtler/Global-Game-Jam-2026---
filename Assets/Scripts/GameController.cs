@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Net;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -29,11 +30,13 @@ public class GameController : MonoBehaviour
 	private GameObject fadePanel;
 	private bool instructionsToggle = false;
 	private Animator animator;
+    private PlayerController player;
+    //[SerializeField] private int[] xpToUnlockSkill;
 
-	//private string apiURL = "http://10.10.10.10:8080/api/{Game Name}";
-	//private string apiURL = "/api/{Game Name}";	
+    //private string apiURL = "http://10.10.10.10:8080/api/{Game Name}";
+    //private string apiURL = "/api/{Game Name}";	
 
-	private void Awake()
+    private void Awake()
 	{
 		if (instance != null) {
 			Destroy(gameObject);
@@ -60,8 +63,9 @@ public class GameController : MonoBehaviour
 			{
 				instructionsToggle = PlayerPrefsManager.GetInstructionsToggle();
 			}
-		}
-	}
+            player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerController>();
+        }
+    }
 
 	private void Update()
 	{
@@ -87,10 +91,16 @@ public class GameController : MonoBehaviour
 		Application.logMessageReceived -= HandleLog;
 	}
 
-	// Used to check when a Controller with empty string is connected.
-	// Typically when using a wireless controller since Input.GetJoystickNames() always returns an empty string on wireless.
-	// Standard controller checking will not work in those cases.
-	private void HandleLog(string logString, string stackTrace, LogType type)
+    public void AddXP(int amount)
+    {
+        Experience += amount;
+        player.CheckSkillUnlocks(Experience);
+    }
+
+    // Used to check when a Controller with empty string is connected.
+    // Typically when using a wireless controller since Input.GetJoystickNames() always returns an empty string on wireless.
+    // Standard controller checking will not work in those cases.
+    private void HandleLog(string logString, string stackTrace, LogType type)
 	{
 		if (logString.Contains("Joystick connected")) {
 			//Debug.Log("Wireless controller connected!");

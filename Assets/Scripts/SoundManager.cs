@@ -10,7 +10,8 @@ public class SoundManager : MonoBehaviour {
 	[SerializeField] private AudioSource SFXAudioSource;
 	[SerializeField] private AudioSource ambientAudioSource;
 	[Space]
-	[SerializeField] private AudioClip[] music;
+	[SerializeField] private AudioClip Monologue;
+    [SerializeField] private AudioClip[] music;
 	[SerializeField] private AudioClip[] ambientClips;
 	[SerializeField] private AudioClip[] walkClips;
     [SerializeField] private AudioClip[] runClips;
@@ -114,7 +115,11 @@ public class SoundManager : MonoBehaviour {
 		}
 	}
 
-	public void PlayMusicForScene(int index)
+	public void PlayMonologue() {
+		SFXAudioSource.PlayOneShot(Monologue, 1f);
+	}
+
+    public void PlayMusicForScene(int index)
 	{
 		if (music.Length > 0) {
 			MusicAudioSource.clip = music[index];

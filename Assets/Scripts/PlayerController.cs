@@ -16,14 +16,15 @@ public class PlayerController : MonoBehaviour
     [Space]
 	[Tooltip("Skill Prefabs")]
 	[SerializeField] private GameObject[] skills;
-	[SerializeField] private Transform skillSpawner, skillSpawnPoint, activeSkillContainer;
+    [SerializeField] private int[] xpRequiredForSkill; // same length as skills[]
+    [SerializeField] private Transform skillSpawner, skillSpawnPoint, activeSkillContainer;
 	[Space]
 	[SerializeField] private Transform playerTransform;
 	[Space]
 	[SerializeField] private CanvasController canvasController;
 	[SerializeField] private bool isMaskOn;
 
-	public bool IsMaskOn { get => isMaskOn; }
+    public bool IsMaskOn { get => isMaskOn; }
     public enum MoveDir { None, North, South, East, West }
     public MoveDir currentDirection = MoveDir.None;
 
@@ -67,8 +68,9 @@ public class PlayerController : MonoBehaviour
     private bool[] hasFiredOnce;
 
     public int experiencePoints;
+    private bool[] unlockedSkills;
 
-	void Start()
+    void Start()
 	{
 		myRigidbody2D = GetComponent<Rigidbody2D>();
 		animator = GetComponentInChildren<Animator>(true);
@@ -83,12 +85,19 @@ public class PlayerController : MonoBehaviour
         hasFiredOnce = new bool[skills.Length];
 
 
+        unlockedSkills = new bool[skills.Length];
+        unlockedSkills[0] = true;
+
         for (int i = 0; i < skills.Length; i++)
         {
             SkillConfig skill = skills[i].GetComponent<SkillConfig>();
             coolDownTimes[i] = skill.CoolDownTime;
             canvasController.SetCoolDownTime(i, coolDownTimes[i]);
             canvasController.SetSkillImages(i, skill.SkillImage);
+
+            // optionally unlock the first skill by default
+            if (i == 0)
+                unlockedSkills[i] = true;
         }
     }
 
@@ -105,11 +114,26 @@ public class PlayerController : MonoBehaviour
 			LevelManager.instance.LoadLevel(LevelManager.MainMenuString);
 		}
 	}
+    public void CheckSkillUnlocks(int currentXP)
+    {
+        for (int i = 0; i < skills.Length; i++)
+        {
+            if (!unlockedSkills[i] && currentXP >= xpRequiredForSkill[i])
+            {
+                unlockedSkills[i] = true;
+                //canvasController.EnableSkillSlot(i); // optional UI
+            }
+        }
+    }
 
-	//public void AddToInventory(GameObject inventoryPrefab) {
-	//	inventoryItems.Add(inventoryPrefab);
-	//	//canvasController.AddInventoryItem(inventoryPrefab);
-	//}
+    public void UnlockSkill(int index)
+    {
+        if (index < 0 || index >= skills.Length)
+            return;
+
+        unlockedSkills[index] = true;
+        //canvasController.EnableSkillSlot(index); // optional UI hook
+    }
 
     public void PickedupMask() { 
         isMaskOn = true;
@@ -254,6 +278,9 @@ public class PlayerController : MonoBehaviour
     private void TryFireSkill(int index, Vector2 direction)
     {
         SkillConfig skillConfig = skills[index].GetComponent<SkillConfig>();
+
+        if (!unlockedSkills[index])
+            return;
 
         // Fire rate check
         if (Time.time < nextFireTimes[index])

@@ -31,7 +31,6 @@ public class GameController : MonoBehaviour
 	private bool instructionsToggle = false;
 	private Animator animator;
     private PlayerController player;
-    //[SerializeField] private int[] xpToUnlockSkill;
 
     //private string apiURL = "http://10.10.10.10:8080/api/{Game Name}";
     //private string apiURL = "/api/{Game Name}";	

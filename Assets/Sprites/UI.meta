@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Audio/SFX/Main Menu Monologue.meta
+guid: 69e526a4aea3a6944bead9ee45685a9d
+========
 guid: e4c6a470f21822b4789b0ee30b91cef6
+>>>>>>>> master:Assets/Sprites/UI.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

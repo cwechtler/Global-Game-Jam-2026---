@@ -19,6 +19,7 @@ public class PlayerSoundFX : MonoBehaviour
     {
         player.IsAttacking = false;
         animator.speed = 1f; // reset to normal
+        Debug.Log("Attack animation finished.");
     }
 
 

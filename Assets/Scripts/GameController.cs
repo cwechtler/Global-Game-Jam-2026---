@@ -189,12 +189,12 @@ public class GameController : MonoBehaviour
 		return true;
 	}
 
-	public void AddEnemyType(maskType maskType) {
+	public void AddEnemyType(AttackType maskType) {
 		switch (maskType) {
-            case maskType.mask1:
+            case AttackType.mask1:
                 //mask1++;
                 break;
-            case maskType.mask2:
+            case AttackType.mask2:
                 //mask2++;
                 break;
             default:

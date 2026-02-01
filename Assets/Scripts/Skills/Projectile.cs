@@ -1,50 +1,59 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Rendering;
 using UnityEngine;
 
-public class Projectile : SkillConfig
+public class Projectile : MonoBehaviour
 {
+    private float areaEffect = 3f;
+    private float damage = 10f;
+    private AudioClip projectileCollisionSound;
+    private Animator animator;
 
-    [SerializeField] private float range = 1f;
-    [SerializeField] private float projectileSpeed = 10f;
-    [Space]
-    [Tooltip("The particle system to play.")]
-    [SerializeField] private ParticleSystem ProjectileParticleSystem;
-    [Tooltip("The particle system to play upon collision.")]
-    [SerializeField] private ParticleSystem ProjectileExplosionParticleSystem;
-    [Range(.01f, 10f)][SerializeField] private float areaEffect = 6f;
+    public float AreaEffect { get => areaEffect; set => areaEffect = value; }
+    public float Damage { get => damage; set => damage = value; }
+    public AudioClip ProjectileCollisionSound { get => projectileCollisionSound; set => projectileCollisionSound = value; }
 
-    [Tooltip("The sound to play upon collision.")]
-    [SerializeField] private AudioSource ProjectileCollisionSound;
-
-    private bool stop = false;
-    ParticleSystem.MainModule main;
-
-    public float ProjectileSpeed { get => projectileSpeed; set => projectileSpeed = value; }
-    public float Range { get => range; set => range = value; }
-
-    void Start()
+    private void Start()
     {
-        transform.up = GetComponent<Rigidbody2D>().velocity;
-        if (ProjectileParticleSystem)
-        {
-            ProjectileParticleSystem.Play();
-        }
-        main = ProjectileParticleSystem.main;
-        StartCoroutine(DestroySkill(Range));
+        animator = GetComponent<Animator>();
+
     }
 
-    void Update()
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        if (collision.gameObject.CompareTag("Enemy") || collision.gameObject.CompareTag("Obsticle") || collision.gameObject.CompareTag("Destructible"))
+        {
+            this.GetComponent<Rigidbody2D>().velocity = new Vector3(0, 0, 0);
+            var colls = Physics2D.OverlapCircleAll(transform.position, AreaEffect);
+            Debug.Log("Projectile hit something, colliders found: " + colls.Length);
+            animator.SetBool("HitSomething", true);
+            foreach (var col in colls)
+            {
+                Debug.Log("Collider found: " + col.name + " with tag: " + col.tag);
+                if (col.CompareTag("Enemy"))
+                {
+                    Debug.Log("Applying damage to enemy: " + col.name);
+                    Enemy enemy = col.GetComponentInParent<Enemy>();
+                    enemy.reduceHealth(damage);              
+                }
+            }
+
+            AnimatorClipInfo[] clips = animator.GetCurrentAnimatorClipInfo(0);
+            if (clips.Length > 0)
+            {
+                float clipLength = clips[0].clip.length;
+                Destroy(gameObject, clipLength);
+            }
+            else 
+            { 
+                Destroy(gameObject); 
+            }
+        }
     }
 
     private IEnumerator DestroySkill(float skillDuration)
     {
         yield return new WaitForSeconds(skillDuration);
-        stop = true;
-        yield return new WaitForSeconds(1.5f);
         gameObject.GetComponent<CircleCollider2D>().enabled = false;
         yield return new WaitForSeconds(1f);
         Destroy(gameObject);
@@ -53,6 +62,6 @@ public class Projectile : SkillConfig
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, areaEffect);
+        Gizmos.DrawWireSphere(transform.position, AreaEffect);
     }
 }

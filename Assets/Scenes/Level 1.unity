@@ -265,6 +265,7 @@ MonoBehaviour:
   experiencePointValue: 10
   mainSprite: {fileID: 181182855}
   alternateSprite: {fileID: 214251071}
+  DamageDoneTMP: {fileID: 0}
 --- !u!50 &2423129
 Rigidbody2D:
   serializedVersion: 4
@@ -689,6 +690,7 @@ MonoBehaviour:
   experiencePointValue: 10
   mainSprite: {fileID: 1651075137}
   alternateSprite: {fileID: 1832897792}
+  DamageDoneTMP: {fileID: 0}
 --- !u!50 &106017046
 Rigidbody2D:
   serializedVersion: 4
@@ -845,6 +847,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 1111937830}
+    - target: {fileID: 3097469755265321576, guid: be862919569972a4bbeb2c431f657a69, type: 3}
+      propertyPath: animator
+      value: 
+      objectReference: {fileID: 3046356044595028185}
     - target: {fileID: 3097469755265321576, guid: be862919569972a4bbeb2c431f657a69, type: 3}
       propertyPath: realWorld
       value: 
@@ -1756,6 +1762,7 @@ MonoBehaviour:
   experiencePointValue: 10
   mainSprite: {fileID: 105486807}
   alternateSprite: {fileID: 784526758}
+  DamageDoneTMP: {fileID: 0}
 --- !u!50 &326792127
 Rigidbody2D:
   serializedVersion: 4
@@ -90151,6 +90158,7 @@ MonoBehaviour:
   experiencePointValue: 10
   mainSprite: {fileID: 1915034679}
   alternateSprite: {fileID: 2021686534}
+  DamageDoneTMP: {fileID: 0}
 --- !u!50 &1439336277
 Rigidbody2D:
   serializedVersion: 4
@@ -146647,6 +146655,7 @@ MonoBehaviour:
   experiencePointValue: 10
   mainSprite: {fileID: 1303385861}
   alternateSprite: {fileID: 801455173}
+  DamageDoneTMP: {fileID: 0}
 --- !u!50 &1685505013
 Rigidbody2D:
   serializedVersion: 4
@@ -148097,3 +148106,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
+--- !u!95 &3046356044595028185 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 4871158291384598690, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
+  m_PrefabInstance: {fileID: 3046356044595028184}
+  m_PrefabAsset: {fileID: 0}

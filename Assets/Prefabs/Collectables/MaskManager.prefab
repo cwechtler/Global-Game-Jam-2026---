@@ -84,6 +84,11 @@ MonoBehaviour:
   - {fileID: 3351294034674235864}
   - {fileID: 1384382962020335935}
   - {fileID: 4515109822843326501}
+  realWorld: {fileID: 0}
+  cursedWorld: {fileID: 0}
+  animator: {fileID: 0}
+  maskOverride: {fileID: 22100000, guid: 654f8717829f0294b93a52fd0b4d0849, type: 2}
+  cooldownDuration: 10
 --- !u!1 &6764608650539344764
 GameObject:
   m_ObjectHideFlags: 0

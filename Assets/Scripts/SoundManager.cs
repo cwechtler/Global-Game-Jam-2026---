@@ -135,7 +135,7 @@ public class SoundManager : MonoBehaviour {
 		if (music.Length > 0) {
 			MusicAudioSource.clip = music[index];
 			if (LevelManager.instance.currentScene == "MikeTest") {
-				MusicAudioSource.volume = 0;
+				MusicAudioSource.volume = .5f;
 				audioVolume = 0f;
 			}
 		}

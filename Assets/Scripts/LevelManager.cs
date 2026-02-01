@@ -150,9 +150,12 @@ public class LevelManager : MonoBehaviour {
 		if (restart) {
 			GameController.instance.resetGame();
 		}
-		if (name != MainMenuString) {
+		if (name != MainMenuString || name != LoseLevelString) {
 			SoundManager.instance.StopMonologue();
 		}
+		if (name == LoseLevelString) {
+            SoundManager.instance.PlayEndMonologue();
+        }
 		StartCoroutine(LoadLevel(name, .9f));
 	}
 

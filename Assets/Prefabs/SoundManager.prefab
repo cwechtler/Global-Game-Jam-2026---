@@ -48,7 +48,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 0
+  Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -357,6 +357,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 2c69f4b8bb42bf949bfb07f0de298107, type: 3}
   - {fileID: 8300000, guid: fcb32af19bc967b459ddd1093b842de7, type: 3}
   - {fileID: 8300000, guid: 9cf74c0ccab570e438780fe4bf5fe5e7, type: 3}
-  buttonClick: {fileID: 0}
+  buttonClick: {fileID: 8300000, guid: c1093a59893fa984a9628c51ad8b0954, type: 3}
   scoreClip: {fileID: 0}
-  deathClip: {fileID: 8300000, guid: b65f908dbc7f58c41bbaa20aae934553, type: 3}
+  deathClip: {fileID: 8300000, guid: aa2b5b1433b4556459c32208e2993866, type: 3}

@@ -4,9 +4,8 @@ using UnityEngine;
 
 public enum AttackType
 {
-	mask1,
-	mask2,
     Cone45,
+	Orbital,
     Radial,
     ExpandingRadius,
     Projectile
@@ -18,7 +17,7 @@ public class SkillConfig : MonoBehaviour
 	[SerializeField] private Sprite skillImage;
 	[SerializeField] private float damage = 100f;
 	[SerializeField] private float firingRate = 0.5f;
-	[SerializeField] private float coolDownTime = 5f;
+	[SerializeField] protected float coolDownTime = 5f;
 	[SerializeField] private bool fireOnce = false;
 	[SerializeField] private AttackType attackType;
 

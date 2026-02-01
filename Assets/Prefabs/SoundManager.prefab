@@ -339,7 +339,10 @@ MonoBehaviour:
   MusicAudioSource: {fileID: 5739616327053476989}
   SFXAudioSource: {fileID: 5739616327053476986}
   ambientAudioSource: {fileID: 5739616327053476987}
-  music: []
+  music:
+  - {fileID: 8300000, guid: 4f1a29717f0bcaa4eb521097901c7515, type: 3}
+  - {fileID: 8300000, guid: a84d839f1e96420469ddd38a4690dca3, type: 3}
+  - {fileID: 8300000, guid: a12f898be54c00e4f82935c11bc61076, type: 3}
   ambientClips: []
   walkClips: []
   runClips:
@@ -348,7 +351,10 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 765aadce76cc1b1419c5a5028aa875d5, type: 3}
   - {fileID: 8300000, guid: bbd93d3355fb26d4f9e6a34ac9313dc7, type: 3}
   - {fileID: 8300000, guid: 700b2d15a73d4b34cb63fe92fa214f02, type: 3}
+  hurtClips:
+  - {fileID: 8300000, guid: 2c69f4b8bb42bf949bfb07f0de298107, type: 3}
+  - {fileID: 8300000, guid: fcb32af19bc967b459ddd1093b842de7, type: 3}
+  - {fileID: 8300000, guid: 9cf74c0ccab570e438780fe4bf5fe5e7, type: 3}
   buttonClick: {fileID: 0}
   scoreClip: {fileID: 0}
-  hurtClip: {fileID: 8300000, guid: 9cf74c0ccab570e438780fe4bf5fe5e7, type: 3}
   deathClip: {fileID: 8300000, guid: b65f908dbc7f58c41bbaa20aae934553, type: 3}

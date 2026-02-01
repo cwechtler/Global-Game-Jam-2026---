@@ -15,6 +15,8 @@ public class GameController : MonoBehaviour
 	public GameObject playerGO { get; private set; }
 	public bool isPaused { get; private set; }
 	public float timeDeltaTime { get; private set; }
+
+	public int Experience { get; set; }
 	public int EnemiesKilled { get; set; }
 	public int ActiveSkillIndex { get; set; }
 	public string PlayerName { get; set; }
@@ -189,18 +191,20 @@ public class GameController : MonoBehaviour
 		return true;
 	}
 
-	public void AddEnemyType(AttackType maskType) {
-		switch (maskType) {
-            case AttackType.mask1:
-                //mask1++;
-                break;
-            case AttackType.mask2:
-                //mask2++;
-                break;
-            default:
-				break;
-		}
-	}
+	//public void AddEnemyType(AttackType maskType)
+	//{
+	//	switch (maskType)
+	//	{
+	//		case AttackType.mask1:
+	//			//mask1++;
+	//			break;
+	//		case AttackType.mask2:
+	//			//mask2++;
+	//			break;
+	//		default:
+	//			break;
+	//	}
+	//}
 
 	public void resetGame() {
 		EnemiesKilled = 0;

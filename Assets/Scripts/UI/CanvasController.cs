@@ -12,7 +12,7 @@ public class CanvasController : MonoBehaviour
 	[SerializeField] private Color32 defaultTextColor = new Color32(0, 138, 255, 255);
 	[SerializeField] private Color32 activeTextColor = new Color32(255, 0, 0, 255);
 	[Space]
-	[SerializeField] private Slider playerHealthBar;
+	//[SerializeField] private Slider playerHealthBar;
 	[SerializeField] private TextMeshProUGUI ScoreText;
 	[SerializeField] private TextMeshProUGUI[] skillTexts;
 	[SerializeField] private Slider[] skillCoolDowns;
@@ -24,7 +24,7 @@ public class CanvasController : MonoBehaviour
 
 	private void Start()
 	{
-		playerHealthBar.value = 100;
+		//playerHealthBar.value = 100;
 		UpdateTextColor();
 		foreach (Transform child in inventory.transform) {
 			if (child.name == "Key") {
@@ -44,18 +44,18 @@ public class CanvasController : MonoBehaviour
 		}
 	}
 
-	public void AddInventoryItem(GameObject inventoryPrefab) {
-		Instantiate(inventoryPrefab, inventory.transform);
-	}
+	//public void AddInventoryItem(GameObject inventoryPrefab) {
+	//	Instantiate(inventoryPrefab, inventory.transform);
+	//}
 
-	public void RemoveInventoryItem(string itemKey)
-	{
-		foreach (Transform child in inventory.transform) {
-			if (child.name == itemKey) {
-				GameObject.Destroy(child.gameObject);
-			}
-		}
-	}
+	//public void RemoveInventoryItem(string itemKey)
+	//{
+	//	foreach (Transform child in inventory.transform) {
+	//		if (child.name == itemKey) {
+	//			GameObject.Destroy(child.gameObject);
+	//		}
+	//	}
+	//}
 
 	public void UpdateTextColor()
 	{		
@@ -90,9 +90,9 @@ public class CanvasController : MonoBehaviour
 		}
 	}
 
-	public void ReduceHealthBar(int amount) {
-		playerHealthBar.value = amount;
-	}
+	//public void ReduceHealthBar(int amount) {
+	//	playerHealthBar.value = amount;
+	//}
 
 	public void MainMenu()
 	{

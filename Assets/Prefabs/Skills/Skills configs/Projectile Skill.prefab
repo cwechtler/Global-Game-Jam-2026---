@@ -52,5 +52,6 @@ MonoBehaviour:
   projectileVFX: {fileID: 9128552685099851390, guid: e16f010550d44dd4e82d684b400f6ee2, type: 3}
   range: 50
   projectileSpeed: 20
+  hasEndAnimation: 1
   areaEffect: 2
   projectileCollisionSound: {fileID: 0}

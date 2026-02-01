@@ -3,14 +3,15 @@ using UnityEngine;
 public class MaskPickup : MonoBehaviour
 {
     [Header("Sprites")]
-    public Sprite maskOnSprite;
-    public Sprite maskOffSprite;
+    [SerializeField] private Sprite maskOnSprite;
+    [SerializeField] private Sprite maskOffSprite;
 
     private SpriteRenderer spriteRenderer;
     private PlayerController player;
     private MaskManager manager;
 
     private bool showingMaskOn;
+    private bool hasTriggered = false;
 
     private void Awake()
     {
@@ -53,19 +54,25 @@ public class MaskPickup : MonoBehaviour
         if (!other.CompareTag("Player"))
             return;
 
-        PlayerController notPlayer = other.GetComponent<PlayerController>();
-        
-        if (notPlayer.IsMaskOn == false)
+        if (hasTriggered)
+            return;
+
+        hasTriggered = true;
+
+        if (player.IsMaskOn)
         {
-            notPlayer.PickedupMask();
-            Debug.Log(player.IsMaskOn);
-        } 
-        else 
+            player.RemoveMask();
+            manager.SwitchMap();
+        }
+        else
         {
-            notPlayer.RemoveMask();
+            player.PickedupMask();
+            manager.SwitchMap();
+            manager.StartCooldown();
         }
 
         manager.ClearMaskPickup();
         Destroy(gameObject);
+
     }
 }

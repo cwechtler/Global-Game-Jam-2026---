@@ -11,6 +11,7 @@ public class SoundManager : MonoBehaviour {
 	[SerializeField] private AudioSource ambientAudioSource;
 	[Space]
 	[SerializeField] private AudioClip Monologue;
+    [SerializeField] private AudioClip endMonologue;
     [SerializeField] private AudioClip[] music;
 	[SerializeField] private AudioClip[] ambientClips;
 	[SerializeField] private AudioClip[] walkClips;
@@ -118,6 +119,11 @@ public class SoundManager : MonoBehaviour {
 	public void PlayMonologue() {
 		SFXAudioSource.PlayOneShot(Monologue, 1f);
 	}
+
+    public void PlayEndMonologue()
+    {
+        SFXAudioSource.PlayOneShot(endMonologue, 1f);
+    }
 
     public void PlayMusicForScene(int index)
 	{

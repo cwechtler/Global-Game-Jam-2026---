@@ -51,7 +51,12 @@ public class LevelManager : MonoBehaviour {
 		{
 			SoundManager.instance.PlayMonologue();
 		}
-	}
+
+        else if (currentScene == LoseLevelString)
+        {
+            SoundManager.instance.PlayEndMonologue();
+        }
+    }
 
 	private void Update(){
 		if (SceneManager.GetActiveScene().name != currentScene) {

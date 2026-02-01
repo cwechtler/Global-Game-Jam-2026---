@@ -1243,7 +1243,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -15}
+  m_AnchoredPosition: {x: 0, y: -12}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1723905112
@@ -1368,7 +1368,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: -25}
-  m_SizeDelta: {x: 100, y: 50}
+  m_SizeDelta: {x: 100, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2132247280
 CanvasRenderer:
@@ -1712,6 +1712,7 @@ GameObject:
   - component: {fileID: 3249283711053495671}
   - component: {fileID: 690238369}
   - component: {fileID: 690238370}
+  - component: {fileID: 690238367}
   m_Layer: 5
   m_Name: Main Menu Button
   m_TagString: Untagged
@@ -1736,7 +1737,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 15, y: -15}
+  m_AnchoredPosition: {x: 15, y: -12}
   m_SizeDelta: {x: 208.84161, y: 30}
   m_Pivot: {x: 0, y: 0.5}
 --- !u!222 &4325174483085637909
@@ -1845,7 +1846,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b903a02353a6aa4b96184c910e5340f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetText: {fileID: 0}
+  targetText: {fileID: 6051386306639303268}
   normalColor: {r: 0, g: 0, b: 0, a: 1}
   hoverColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   pressedColor: {r: 0.92549026, g: 0.43137258, b: 0.21568629, a: 1}
@@ -1861,7 +1862,51 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Delegates: []
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 690238369}
+          m_TargetAssemblyTypeName: TMPTextColorChanger, Assembly-CSharp
+          m_MethodName: OnHoverEnter
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 690238369}
+          m_TargetAssemblyTypeName: TMPTextColorChanger, Assembly-CSharp
+          m_MethodName: OnHoverExit
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+--- !u!114 &690238367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8630117965035804644}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 813e9cc23b2cf43469eacb68859b523b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9160323744552654096
 GameObject:
   m_ObjectHideFlags: 0
@@ -2098,10 +2143,10 @@ MonoBehaviour:
   inventory: {fileID: 1333293659}
   defaultTextColor:
     serializedVersion: 2
-    rgba: 4294937088
+    rgba: 4294967295
   activeTextColor:
     serializedVersion: 2
-    rgba: 4278190335
+    rgba: 4281822956
   ScoreText: {fileID: 9160323744985149306}
   skillTexts:
   - {fileID: 9160323744778970987}

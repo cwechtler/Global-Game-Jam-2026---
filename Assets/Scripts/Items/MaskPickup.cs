@@ -58,14 +58,12 @@ public class MaskPickup : MonoBehaviour
         {
             player.RemoveMask();
             manager.SwitchMap();
-            Debug.Log("Removed mask");
         }
         else
         {
             player.PickedupMask();
             manager.SwitchMap();
             manager.StartCooldown();
-            Debug.Log("Picked up mask");
         }
 
         manager.ClearMaskPickup();

@@ -6,8 +6,14 @@ public class MaskManager : MonoBehaviour
     [SerializeField] private PlayerController player;
     [SerializeField] private GameObject maskPickupPrefab;
     [SerializeField] private Transform[] spawnPoints;
+
+    [Header("Worlds")]
     [SerializeField] private GameObject realWorld;
     [SerializeField] private GameObject cursedWorld;
+    
+    [Header("Animators")]
+    [SerializeField] private Animator animator;
+    [SerializeField] private AnimatorOverrideController maskOverride;
 
     [Header("Cooldown")]
     public float cooldownDuration = 10f;
@@ -15,10 +21,12 @@ public class MaskManager : MonoBehaviour
     private bool cooldownActive;
 
     private GameObject activeMaskPickup;
+    private RuntimeAnimatorController baseController;
 
     // How do we spawn the Mask?
     public void Awake()
     {
+        baseController = animator.runtimeAnimatorController;
         TrySpawnMask();
     }
 
@@ -94,10 +102,12 @@ public class MaskManager : MonoBehaviour
         if (realWorld.activeInHierarchy) { 
             realWorld.SetActive(false);
             cursedWorld.SetActive(true);
+            animator.runtimeAnimatorController = maskOverride;
         } else
         {
+            animator.runtimeAnimatorController = baseController;
             cursedWorld.SetActive(false);
-            realWorld.SetActive(true);
+            realWorld.SetActive(true); 
         }
     }
 }

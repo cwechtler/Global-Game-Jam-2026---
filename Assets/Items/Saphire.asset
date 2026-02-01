@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77489a0de246bbb4f90ab1e4c14f8bca, type: 3}
   m_Name: Saphire
   m_EditorClassIdentifier: 
-  gemName: 
-  sprite: {fileID: 0}
-  amount: 0
-  rarity: 0
+  gemName: Saphire
+  sprite: {fileID: 21300000, guid: 0c195bf512e52ed4095e6f431b2afa98, type: 3}
+  amount: 1
+  rarity: 85

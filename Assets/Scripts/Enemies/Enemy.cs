@@ -15,7 +15,6 @@ public class Enemy : MonoBehaviour
 	[SerializeField] private int damage = 10;
     [SerializeField] private float aipathMaxSpeed = 4f;
 	[Space]
-    [SerializeField] private GameObject expDrop;
 	[SerializeField] private int experiencePointValue = 10;
 	[SerializeField] private GameObject mainSprite;
 	[SerializeField] private GameObject alternateSprite;

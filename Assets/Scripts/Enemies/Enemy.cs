@@ -23,11 +23,11 @@ public class Enemy : MonoBehaviour
 
 	public float Health { get => health;}
 	public float Damage { get => damage;}
-	
+    public event Action OnDeath;
 
     // health changes based on state
-	
-	private AIPath aipath;
+
+    private AIPath aipath;
 	private AIDestinationSetter destinationSetter;
 	private GameObject player;
 	private Rigidbody2D myRigidbody;
@@ -110,9 +110,10 @@ public class Enemy : MonoBehaviour
 		health -= damage;
 		if (health <= 0 && !isDead) {
 			isDead = true;
-			Destroy(gameObject);
-			SoundManager.instance.PlayOneShot(deathClip);
-			GameController.instance.EnemiesKilled++;
+			Die();
+			//Destroy(gameObject);
+			//SoundManager.instance.PlayOneShot(deathClip);
+			//GameController.instance.EnemiesKilled++;
 			//GameController.instance.AddEnemyType(maskTypeToActivate);
 
 			////Drop Experience - MT
@@ -122,8 +123,19 @@ public class Enemy : MonoBehaviour
 			//drop.transform.SetParent(DropContainer.transform);
 		}
 	}
+    private void Die()
+    {
+        if (isDead) return;
+        isDead = true;
 
-	private void DamagePlayer() {
+        OnDeath?.Invoke(); 
+
+        Destroy(gameObject);
+        SoundManager.instance.PlayOneShot(deathClip);
+        GameController.instance.EnemiesKilled++;
+    }
+
+    private void DamagePlayer() {
 		damageTimer = 1;
 		player.GetComponent<PlayerController>().ReduceHealth(damage);
 	}

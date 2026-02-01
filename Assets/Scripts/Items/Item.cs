@@ -31,7 +31,7 @@ public class Item : MonoBehaviour
 	{
 		if (collision.CompareTag("Player") && !pickedUp) {
 			pickedUp = true;
-			collision.GetComponent<PlayerController>().AddToInventory(inventoryPrefab);
+			//collision.GetComponent<PlayerController>().AddToInventory(inventoryPrefab);
 			GameObject.Destroy(this.gameObject);
 		}
 	}

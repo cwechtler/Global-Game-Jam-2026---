@@ -11,7 +11,6 @@ public class PlayerHealthBar : MonoBehaviour
     void Start()
     {
         playerController = GetComponent<PlayerController>();
-        //playerHealthBar.value = playerController.Health;
     }
 
     // Update is called once per frame

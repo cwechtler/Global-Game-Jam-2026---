@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   skillImage: {fileID: 21300000, guid: e4f44dd5c7c2c3a4e9d1b664261f9cc7, type: 3}
-  damage: 100
+  damage: 3
   firingRate: 1
   coolDownTime: 5
   fireOnce: 0

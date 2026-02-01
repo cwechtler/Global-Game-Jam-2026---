@@ -339,7 +339,7 @@ MonoBehaviour:
   MusicAudioSource: {fileID: 5739616327053476989}
   SFXAudioSource: {fileID: 5739616327053476986}
   ambientAudioSource: {fileID: 5739616327053476987}
-  Monologue: {fileID: 8300000, guid: 085b9a7307a71e54cafef16a0fd31701, type: 3}
+  Monologue: {fileID: 8300000, guid: fdb2611435ae44e4bae24edd976ba68b, type: 3}
   music:
   - {fileID: 8300000, guid: 4f1a29717f0bcaa4eb521097901c7515, type: 3}
   - {fileID: 8300000, guid: a84d839f1e96420469ddd38a4690dca3, type: 3}

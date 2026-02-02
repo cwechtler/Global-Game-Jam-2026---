@@ -217,6 +217,8 @@ public class GameController : MonoBehaviour
 
 	public void resetGame() {
 		EnemiesKilled = 0;
+		Experience = 0;
+		Gems = 0;
 	}
 
 	public void FadePanel()

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.Audio;
 
 public class SoundManager : MonoBehaviour {
@@ -127,8 +128,17 @@ public class SoundManager : MonoBehaviour {
 
     public void PlayEndMonologue()
     {
+        StartCoroutine(PlayDelayed(1.2f));
+
+    }
+
+    private IEnumerator PlayDelayed(float delay)
+    {
+        yield return new WaitForSeconds(delay);
         SFXAudioSource.PlayOneShot(endMonologue, 1f);
     }
+
+
 
     public void PlayMusicForScene(int index)
 	{

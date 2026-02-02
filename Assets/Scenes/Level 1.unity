@@ -24380,6 +24380,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 9160323744690344004, guid: 089e74b560024db4c955a449f4bef6fe, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9160323744690344008, guid: 089e74b560024db4c955a449f4bef6fe, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -147878,6 +147882,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 116308500677857468, guid: a6be77a5df3663a499bfcac87e462cfa, type: 3}
+      propertyPath: maxWaitToSpawn
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 806987773833970623, guid: a6be77a5df3663a499bfcac87e462cfa, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2695070133164896765, guid: a6be77a5df3663a499bfcac87e462cfa, type: 3}
       propertyPath: m_RootOrder
       value: 16
@@ -147982,6 +147994,10 @@ PrefabInstance:
     - target: {fileID: 1147470130644135704, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
       propertyPath: m_Name
       value: Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 1147470130644135707, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
+      propertyPath: health
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 1147470130644135707, guid: 912cd461821be7645a0c94c6f86e2c0c, type: 3}
       propertyPath: canvasController
